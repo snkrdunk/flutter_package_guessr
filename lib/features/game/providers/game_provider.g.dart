@@ -53,7 +53,7 @@ final class CurrentGameProvider
   }
 }
 
-String _$currentGameHash() => r'104b70b9838fa4ab2ed6266a08858358b6c77d47';
+String _$currentGameHash() => r'4810187b3633950124e1180cda7ac7937c2b1226';
 
 /// 現在のゲーム状態を管理するプロバイダー
 
@@ -359,4 +359,82 @@ final class IsGameFinishedFamily extends $Family
 
   @override
   String toString() => r'isGameFinishedProvider';
+}
+
+/// 結果画面用：ゲームデータを取得するプロバイダー（常に最新のデータを取得）
+
+@ProviderFor(gameResult)
+const gameResultProvider = GameResultFamily._();
+
+/// 結果画面用：ゲームデータを取得するプロバイダー（常に最新のデータを取得）
+
+final class GameResultProvider
+    extends $FunctionalProvider<AsyncValue<Game?>, Game?, FutureOr<Game?>>
+    with $FutureModifier<Game?>, $FutureProvider<Game?> {
+  /// 結果画面用：ゲームデータを取得するプロバイダー（常に最新のデータを取得）
+  const GameResultProvider._({
+    required GameResultFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'gameResultProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$gameResultHash();
+
+  @override
+  String toString() {
+    return r'gameResultProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<Game?> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<Game?> create(Ref ref) {
+    final argument = this.argument as String;
+    return gameResult(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is GameResultProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$gameResultHash() => r'37e594026a536d4f594ce8d80e94348355f35f61';
+
+/// 結果画面用：ゲームデータを取得するプロバイダー（常に最新のデータを取得）
+
+final class GameResultFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<Game?>, String> {
+  const GameResultFamily._()
+    : super(
+        retry: null,
+        name: r'gameResultProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// 結果画面用：ゲームデータを取得するプロバイダー（常に最新のデータを取得）
+
+  GameResultProvider call(String gameId) =>
+      GameResultProvider._(argument: gameId, from: this);
+
+  @override
+  String toString() => r'gameResultProvider';
 }

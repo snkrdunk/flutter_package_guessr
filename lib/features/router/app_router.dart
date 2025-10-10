@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../domain/entities/game.dart';
 import '../home/screens/home_screen.dart';
 import '../home/screens/score_history_screen.dart';
 import '../game/screens/game_screen.dart';
@@ -38,8 +39,8 @@ final goRouter = GoRouter(
       path: '/result/:gameId',
       name: 'result',
       builder: (context, state) {
-        final gameId = state.pathParameters['gameId']!;
-        return ResultScreen(gameId: gameId);
+        final game = state.extra as Game;
+        return ResultScreen(game: game);
       },
     ),
   ],

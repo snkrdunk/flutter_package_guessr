@@ -43,7 +43,7 @@ final class GameTimerProvider extends $NotifierProvider<GameTimer, int> {
   }
 }
 
-String _$gameTimerHash() => r'1dad0b125ea7b522bb34cefc47c0e25960ed6b6c';
+String _$gameTimerHash() => r'62cc4e3ea86a31e88723f42c6b85b7f4a796df55';
 
 /// タイマーの秒数を管理するプロバイダー
 

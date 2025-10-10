@@ -15,7 +15,7 @@ class GameRepositoryImpl implements GameRepository {
     final game = Game(
       id: _uuid.v4(),
       playerName: playerName,
-      totalRounds: 10,
+      totalRounds: 6, // パッケージ数に合わせて修正
       rounds: [],
       correctCount: 0,
       totalScore: 0,

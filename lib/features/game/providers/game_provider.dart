@@ -16,36 +16,45 @@ class CurrentGame extends _$CurrentGame {
   }
 
   /// 回答を送信
-  Future<void> submitAnswer(String answer, int timeRemaining) async {
+  Future<Game?> submitAnswer(
+    String answer,
+    int timeRemaining,
+    String correctPackageName,
+  ) async {
     final game = state.value;
-    if (game == null) return;
+    if (game == null) return null;
 
-    final currentQuestion = await ref.read(
-      currentQuestionProvider(gameId).future,
-    );
-    if (currentQuestion == null) return;
-
-    state = const AsyncLoading();
-
-    state = await AsyncValue.guard(() async {
+    try {
       final repository = await ref.read(gameRepositoryProvider.future);
-      return await repository.submitAnswer(
+      final updatedGame = await repository.submitAnswer(
         gameId: gameId,
-        packageName: currentQuestion.targetPackage.name,
+        packageName: correctPackageName,
         userAnswer: answer,
         timeRemaining: timeRemaining,
       );
-    });
+
+      // 状態を更新（AsyncLoadingを使わずに直接更新）
+      state = AsyncValue.data(updatedGame);
+      return updatedGame;
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      return null;
+    }
   }
 
   /// ゲームを終了
-  Future<void> finishGame() async {
-    state = const AsyncLoading();
-
-    state = await AsyncValue.guard(() async {
+  Future<Game?> finishGame() async {
+    try {
       final repository = await ref.read(gameRepositoryProvider.future);
-      return await repository.finishGame(gameId);
-    });
+      final finishedGame = await repository.finishGame(gameId);
+
+      // 状態を更新（AsyncLoadingを使わずに直接更新）
+      state = AsyncValue.data(finishedGame);
+      return finishedGame;
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      return null;
+    }
   }
 }
 
@@ -84,4 +93,12 @@ bool isGameFinished(Ref ref, String gameId) {
   final game = ref.watch(currentGameProvider(gameId)).value;
   if (game == null) return false;
   return game.rounds.length >= game.totalRounds;
+}
+
+/// 結果画面用：ゲームデータを取得するプロバイダー（常に最新のデータを取得）
+@riverpod
+Future<Game?> gameResult(Ref ref, String gameId) async {
+  // ref.read を使用して一度だけ取得（watchは使わない）
+  final repository = await ref.read(gameRepositoryProvider.future);
+  return await repository.getGame(gameId);
 }

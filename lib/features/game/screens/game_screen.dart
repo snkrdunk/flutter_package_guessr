@@ -21,6 +21,9 @@ class GameScreen extends ConsumerStatefulWidget {
 }
 
 class _GameScreenState extends ConsumerState<GameScreen> {
+  String? _currentQuestionPackageName;
+  bool _isProcessingAnswer = false;
+
   @override
   void initState() {
     super.initState();
@@ -32,32 +35,58 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   @override
   void dispose() {
-    // タイマーを停止
-    ref.read(gameTimerProvider.notifier).stop();
+    // disposeではrefを使わない
     super.dispose();
   }
 
   Future<void> _handleAnswer(String answer) async {
+    if (_currentQuestionPackageName == null || _isProcessingAnswer) return;
+
+    setState(() {
+      _isProcessingAnswer = true;
+    });
+
     // タイマーを停止
     ref.read(gameTimerProvider.notifier).stop();
 
     final timeRemaining = ref.read(gameTimerProvider);
 
-    // 回答を送信
-    await ref
+    // 回答を送信して更新されたゲームデータを取得
+    final updatedGame = await ref
         .read(currentGameProvider(widget.gameId).notifier)
-        .submitAnswer(answer, timeRemaining);
+        .submitAnswer(
+          answer,
+          timeRemaining,
+          _currentQuestionPackageName!,
+        );
 
-    // ゲームが終了したかチェック
-    final isFinished = ref.read(isGameFinishedProvider(widget.gameId));
+    if (!mounted || updatedGame == null) {
+      if (mounted) {
+        setState(() {
+          _isProcessingAnswer = false;
+        });
+      }
+      return;
+    }
 
-    if (!mounted) return;
+    // 更新されたゲームデータから直接終了判定
+    final isFinished = updatedGame.rounds.length >= updatedGame.totalRounds;
 
     if (isFinished) {
-      // 結果画面へ遷移
-      context.go('/result/${widget.gameId}');
+      // ゲームを終了状態にする
+      final finishedGame = await ref
+          .read(currentGameProvider(widget.gameId).notifier)
+          .finishGame();
+
+      if (!mounted || finishedGame == null) return;
+
+      // 結果画面へ遷移（Gameデータを直接渡す）
+      context.go('/result/${widget.gameId}', extra: finishedGame);
     } else {
       // 次の問題へ（タイマーをリセットして再開）
+      setState(() {
+        _isProcessingAnswer = false;
+      });
       ref.read(gameTimerProvider.notifier).reset();
       ref.read(gameTimerProvider.notifier).start();
     }
@@ -70,6 +99,15 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // 回答処理中はローディング表示
+    if (_isProcessingAnswer) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     final gameAsync = ref.watch(currentGameProvider(widget.gameId));
     final questionAsync = ref.watch(currentQuestionProvider(widget.gameId));
     final currentRoundNumber = ref.watch(currentRoundProvider(widget.gameId));
@@ -127,6 +165,11 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                   child: Text('問題の読み込みに失敗しました'),
                 );
               }
+
+              // 現在の問題のパッケージ名を保存
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                _currentQuestionPackageName = question.targetPackage.name;
+              });
 
               return SafeArea(
                 child: SingleChildScrollView(
