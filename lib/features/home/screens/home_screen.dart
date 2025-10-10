@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../widgets/start_button.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -42,9 +43,7 @@ class HomeScreen extends ConsumerWidget {
 
                 // スコア履歴ボタン
                 OutlinedButton.icon(
-                  onPressed: () {
-                    // TODO: スコア履歴画面へ遷移
-                  },
+                  onPressed: () => context.go('/history'),
                   icon: const Icon(Icons.history),
                   label: const Text('スコア履歴'),
                   style: OutlinedButton.styleFrom(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../providers/home_provider.dart';
 
 class StartButton extends ConsumerStatefulWidget {
   const StartButton({super.key});
@@ -18,7 +20,7 @@ class _StartButtonState extends ConsumerState<StartButton> {
     super.dispose();
   }
 
-  void _handleStart() {
+  Future<void> _handleStart() async {
     if (_showNameInput) {
       final name = _nameController.text.trim();
       if (name.isEmpty) {
@@ -27,11 +29,24 @@ class _StartButtonState extends ConsumerState<StartButton> {
         );
         return;
       }
-      // TODO: ゲーム開始処理
-      // ref.read(gameControllerProvider.notifier).startGame(name);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('ゲーム開始: $name')),
-      );
+
+      // ゲーム開始処理
+      try {
+        final game = await ref
+            .read(gameStarterProvider.notifier)
+            .startGame(name);
+
+        if (mounted) {
+          // ゲーム画面へ遷移
+          context.go('/game/${game.id}');
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('エラーが発生しました: $e')),
+          );
+        }
+      }
     } else {
       setState(() {
         _showNameInput = true;

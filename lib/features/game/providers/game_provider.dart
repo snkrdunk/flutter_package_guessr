@@ -1,0 +1,87 @@
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../../../domain/entities/game.dart';
+import '../../../domain/entities/question.dart';
+import '../../../data/repositories/game_repository_provider.dart';
+import '../../../data/repositories/package_repository_provider.dart';
+
+part 'game_provider.g.dart';
+
+/// 現在のゲーム状態を管理するプロバイダー
+@riverpod
+class CurrentGame extends _$CurrentGame {
+  @override
+  Future<Game?> build(String gameId) async {
+    final repository = await ref.read(gameRepositoryProvider.future);
+    return await repository.getGame(gameId);
+  }
+
+  /// 回答を送信
+  Future<void> submitAnswer(String answer, int timeRemaining) async {
+    final game = state.value;
+    if (game == null) return;
+
+    final currentQuestion = await ref.read(
+      currentQuestionProvider(gameId).future,
+    );
+    if (currentQuestion == null) return;
+
+    state = const AsyncLoading();
+
+    state = await AsyncValue.guard(() async {
+      final repository = await ref.read(gameRepositoryProvider.future);
+      return await repository.submitAnswer(
+        gameId: gameId,
+        packageName: currentQuestion.targetPackage.name,
+        userAnswer: answer,
+        timeRemaining: timeRemaining,
+      );
+    });
+  }
+
+  /// ゲームを終了
+  Future<void> finishGame() async {
+    state = const AsyncLoading();
+
+    state = await AsyncValue.guard(() async {
+      final repository = await ref.read(gameRepositoryProvider.future);
+      return await repository.finishGame(gameId);
+    });
+  }
+}
+
+/// 現在の問題を取得するプロバイダー
+@riverpod
+Future<Question?> currentQuestion(
+  Ref ref,
+  String gameId,
+) async {
+  final game = await ref.watch(currentGameProvider(gameId).future);
+  if (game == null) return null;
+
+  // 既に10ラウンド終了している場合はnullを返す
+  if (game.rounds.length >= game.totalRounds) {
+    return null;
+  }
+
+  // 既に出題されたパッケージ名のリスト
+  final usedPackages = game.rounds.map((r) => r.packageName).toList();
+
+  final packageRepository = ref.read(packageRepositoryProvider);
+  return await packageRepository.generateQuestion(usedPackages);
+}
+
+/// 現在のラウンド番号を取得するプロバイダー
+@riverpod
+int currentRound(Ref ref, String gameId) {
+  final game = ref.watch(currentGameProvider(gameId)).value;
+  if (game == null) return 0;
+  return game.rounds.length + 1;
+}
+
+/// ゲームが終了したかどうかを判定するプロバイダー
+@riverpod
+bool isGameFinished(Ref ref, String gameId) {
+  final game = ref.watch(currentGameProvider(gameId)).value;
+  if (game == null) return false;
+  return game.rounds.length >= game.totalRounds;
+}
