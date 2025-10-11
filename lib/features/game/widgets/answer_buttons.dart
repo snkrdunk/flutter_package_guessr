@@ -15,23 +15,19 @@ class AnswerButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: 2.5,
-      ),
-      itemCount: candidates.length,
-      itemBuilder: (context, index) {
-        final candidate = candidates[index];
-        return _AnswerButton(
-          label: candidate,
-          onTap: isEnabled ? () => onAnswer(candidate) : null,
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: candidates.map((candidate) {
+        return IntrinsicWidth(
+          child: _AnswerButton(
+            label: candidate,
+            onTap: isEnabled ? () => onAnswer(candidate) : null,
+          ),
         );
-      },
+      }).toList(),
     );
   }
 }
@@ -63,16 +59,19 @@ class _AnswerButtonState extends State<_AnswerButton> {
         color: Colors.transparent,
         child: InkWell(
           onTap: widget.onTap,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(15),
           child: Container(
+            height: 30,
+            constraints: const BoxConstraints(minWidth: 60),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
               color: _isHovered && isEnabled
                   ? Colors.indigo
-                  : Colors.white,
-              borderRadius: BorderRadius.circular(12),
+                  : Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(15),
               border: Border.all(
-                color: isEnabled ? Colors.indigo : Colors.grey.shade300,
-                width: 2,
+                color: isEnabled ? Colors.grey.shade300 : Colors.grey.shade300,
+                width: 1,
               ),
               boxShadow: _isHovered && isEnabled
                   ? [
@@ -85,21 +84,18 @@ class _AnswerButtonState extends State<_AnswerButton> {
                   : null,
             ),
             child: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                child: Text(
-                  widget.label,
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: _isHovered && isEnabled
-                        ? Colors.white
-                        : (isEnabled ? Colors.indigo : Colors.grey.shade400),
-                  ),
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+              child: Text(
+                widget.label,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: _isHovered && isEnabled
+                      ? Colors.white
+                      : (isEnabled ? Colors.grey.shade800 : Colors.grey.shade400),
                 ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ),

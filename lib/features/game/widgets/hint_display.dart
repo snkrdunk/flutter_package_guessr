@@ -21,8 +21,12 @@ class HintDisplay extends StatelessWidget {
     }
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const Divider(),
+        const SizedBox(
+          width: 200,
+          child: Divider(),
+        ),
         const SizedBox(height: 8),
         Text(
           'ヒント',

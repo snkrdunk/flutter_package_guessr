@@ -37,13 +37,13 @@ class _CodeSnippetViewerState extends State<CodeSnippetViewer> {
     }
 
     final screenWidth = MediaQuery.of(context).size.width;
-    final circleSize = screenWidth > 600 ? 500.0 : screenWidth * 0.85;
+    final circleSize = screenWidth > 600 ? 450.0 : screenWidth * 0.80;
 
     return Column(
       children: [
         // スニペットカウンター
         Padding(
-          padding: const EdgeInsets.only(bottom: 16),
+          padding: const EdgeInsets.only(bottom: 8),
           child: Text(
             'スニペット ${_currentIndex + 1}/${widget.snippets.length}',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(

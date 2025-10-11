@@ -172,10 +172,12 @@ class _GameScreenState extends ConsumerState<GameScreen> {
               });
 
               return SafeArea(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
+                child: Center(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
                       // ラウンド表示
                       Text(
                         'Round $currentRoundNumber / ${game.totalRounds}',
@@ -183,24 +185,24 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                               fontWeight: FontWeight.bold,
                             ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
 
                       // タイマー
                       const TimerDisplay(),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 16),
 
                       // コードスニペット
                       CodeSnippetViewer(
                         snippets: question.snippets,
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 16),
 
                       // ヒント表示
                       HintDisplay(
                         package: question.targetPackage,
                         secondsRemaining: timerSeconds,
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 16),
 
                       // 質問
                       Text(
@@ -210,7 +212,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                             ),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
 
                       // 回答ボタン
                       AnswerButtons(
@@ -218,9 +220,10 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                         onAnswer: _handleAnswer,
                         isEnabled: timerSeconds > 0,
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 16),
                     ],
                   ),
+                ),
                 ),
               );
             },

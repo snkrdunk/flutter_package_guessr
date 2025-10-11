@@ -18,7 +18,7 @@ class HomeScreen extends ConsumerWidget {
               children: [
                 // タイトル
                 Text(
-                  'Flutter Package\nGuesser',
+                  'Flutter Package Guesser',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.displayLarge?.copyWith(
                         fontWeight: FontWeight.bold,
