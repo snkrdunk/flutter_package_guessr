@@ -305,7 +305,7 @@ as DateTime?,
 /// @nodoc
 mixin _$Round {
 
- String get packageName; int get timeRemaining; bool get isCorrect; String? get userAnswer;
+ String get packageName; int get timeRemaining; bool get isCorrect; String? get userAnswer; bool get isSkipped;
 /// Create a copy of Round
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -318,16 +318,16 @@ $RoundCopyWith<Round> get copyWith => _$RoundCopyWithImpl<Round>(this as Round, 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Round&&(identical(other.packageName, packageName) || other.packageName == packageName)&&(identical(other.timeRemaining, timeRemaining) || other.timeRemaining == timeRemaining)&&(identical(other.isCorrect, isCorrect) || other.isCorrect == isCorrect)&&(identical(other.userAnswer, userAnswer) || other.userAnswer == userAnswer));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Round&&(identical(other.packageName, packageName) || other.packageName == packageName)&&(identical(other.timeRemaining, timeRemaining) || other.timeRemaining == timeRemaining)&&(identical(other.isCorrect, isCorrect) || other.isCorrect == isCorrect)&&(identical(other.userAnswer, userAnswer) || other.userAnswer == userAnswer)&&(identical(other.isSkipped, isSkipped) || other.isSkipped == isSkipped));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,packageName,timeRemaining,isCorrect,userAnswer);
+int get hashCode => Object.hash(runtimeType,packageName,timeRemaining,isCorrect,userAnswer,isSkipped);
 
 @override
 String toString() {
-  return 'Round(packageName: $packageName, timeRemaining: $timeRemaining, isCorrect: $isCorrect, userAnswer: $userAnswer)';
+  return 'Round(packageName: $packageName, timeRemaining: $timeRemaining, isCorrect: $isCorrect, userAnswer: $userAnswer, isSkipped: $isSkipped)';
 }
 
 
@@ -338,7 +338,7 @@ abstract mixin class $RoundCopyWith<$Res>  {
   factory $RoundCopyWith(Round value, $Res Function(Round) _then) = _$RoundCopyWithImpl;
 @useResult
 $Res call({
- String packageName, int timeRemaining, bool isCorrect, String? userAnswer
+ String packageName, int timeRemaining, bool isCorrect, String? userAnswer, bool isSkipped
 });
 
 
@@ -355,13 +355,14 @@ class _$RoundCopyWithImpl<$Res>
 
 /// Create a copy of Round
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? packageName = null,Object? timeRemaining = null,Object? isCorrect = null,Object? userAnswer = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? packageName = null,Object? timeRemaining = null,Object? isCorrect = null,Object? userAnswer = freezed,Object? isSkipped = null,}) {
   return _then(_self.copyWith(
 packageName: null == packageName ? _self.packageName : packageName // ignore: cast_nullable_to_non_nullable
 as String,timeRemaining: null == timeRemaining ? _self.timeRemaining : timeRemaining // ignore: cast_nullable_to_non_nullable
 as int,isCorrect: null == isCorrect ? _self.isCorrect : isCorrect // ignore: cast_nullable_to_non_nullable
 as bool,userAnswer: freezed == userAnswer ? _self.userAnswer : userAnswer // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,isSkipped: null == isSkipped ? _self.isSkipped : isSkipped // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -446,10 +447,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String packageName,  int timeRemaining,  bool isCorrect,  String? userAnswer)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String packageName,  int timeRemaining,  bool isCorrect,  String? userAnswer,  bool isSkipped)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Round() when $default != null:
-return $default(_that.packageName,_that.timeRemaining,_that.isCorrect,_that.userAnswer);case _:
+return $default(_that.packageName,_that.timeRemaining,_that.isCorrect,_that.userAnswer,_that.isSkipped);case _:
   return orElse();
 
 }
@@ -467,10 +468,10 @@ return $default(_that.packageName,_that.timeRemaining,_that.isCorrect,_that.user
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String packageName,  int timeRemaining,  bool isCorrect,  String? userAnswer)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String packageName,  int timeRemaining,  bool isCorrect,  String? userAnswer,  bool isSkipped)  $default,) {final _that = this;
 switch (_that) {
 case _Round():
-return $default(_that.packageName,_that.timeRemaining,_that.isCorrect,_that.userAnswer);case _:
+return $default(_that.packageName,_that.timeRemaining,_that.isCorrect,_that.userAnswer,_that.isSkipped);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -487,10 +488,10 @@ return $default(_that.packageName,_that.timeRemaining,_that.isCorrect,_that.user
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String packageName,  int timeRemaining,  bool isCorrect,  String? userAnswer)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String packageName,  int timeRemaining,  bool isCorrect,  String? userAnswer,  bool isSkipped)?  $default,) {final _that = this;
 switch (_that) {
 case _Round() when $default != null:
-return $default(_that.packageName,_that.timeRemaining,_that.isCorrect,_that.userAnswer);case _:
+return $default(_that.packageName,_that.timeRemaining,_that.isCorrect,_that.userAnswer,_that.isSkipped);case _:
   return null;
 
 }
@@ -502,13 +503,14 @@ return $default(_that.packageName,_that.timeRemaining,_that.isCorrect,_that.user
 @JsonSerializable()
 
 class _Round implements Round {
-  const _Round({required this.packageName, required this.timeRemaining, required this.isCorrect, this.userAnswer});
+  const _Round({required this.packageName, required this.timeRemaining, required this.isCorrect, this.userAnswer, this.isSkipped = false});
   factory _Round.fromJson(Map<String, dynamic> json) => _$RoundFromJson(json);
 
 @override final  String packageName;
 @override final  int timeRemaining;
 @override final  bool isCorrect;
 @override final  String? userAnswer;
+@override@JsonKey() final  bool isSkipped;
 
 /// Create a copy of Round
 /// with the given fields replaced by the non-null parameter values.
@@ -523,16 +525,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Round&&(identical(other.packageName, packageName) || other.packageName == packageName)&&(identical(other.timeRemaining, timeRemaining) || other.timeRemaining == timeRemaining)&&(identical(other.isCorrect, isCorrect) || other.isCorrect == isCorrect)&&(identical(other.userAnswer, userAnswer) || other.userAnswer == userAnswer));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Round&&(identical(other.packageName, packageName) || other.packageName == packageName)&&(identical(other.timeRemaining, timeRemaining) || other.timeRemaining == timeRemaining)&&(identical(other.isCorrect, isCorrect) || other.isCorrect == isCorrect)&&(identical(other.userAnswer, userAnswer) || other.userAnswer == userAnswer)&&(identical(other.isSkipped, isSkipped) || other.isSkipped == isSkipped));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,packageName,timeRemaining,isCorrect,userAnswer);
+int get hashCode => Object.hash(runtimeType,packageName,timeRemaining,isCorrect,userAnswer,isSkipped);
 
 @override
 String toString() {
-  return 'Round(packageName: $packageName, timeRemaining: $timeRemaining, isCorrect: $isCorrect, userAnswer: $userAnswer)';
+  return 'Round(packageName: $packageName, timeRemaining: $timeRemaining, isCorrect: $isCorrect, userAnswer: $userAnswer, isSkipped: $isSkipped)';
 }
 
 
@@ -543,7 +545,7 @@ abstract mixin class _$RoundCopyWith<$Res> implements $RoundCopyWith<$Res> {
   factory _$RoundCopyWith(_Round value, $Res Function(_Round) _then) = __$RoundCopyWithImpl;
 @override @useResult
 $Res call({
- String packageName, int timeRemaining, bool isCorrect, String? userAnswer
+ String packageName, int timeRemaining, bool isCorrect, String? userAnswer, bool isSkipped
 });
 
 
@@ -560,13 +562,14 @@ class __$RoundCopyWithImpl<$Res>
 
 /// Create a copy of Round
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? packageName = null,Object? timeRemaining = null,Object? isCorrect = null,Object? userAnswer = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? packageName = null,Object? timeRemaining = null,Object? isCorrect = null,Object? userAnswer = freezed,Object? isSkipped = null,}) {
   return _then(_Round(
 packageName: null == packageName ? _self.packageName : packageName // ignore: cast_nullable_to_non_nullable
 as String,timeRemaining: null == timeRemaining ? _self.timeRemaining : timeRemaining // ignore: cast_nullable_to_non_nullable
 as int,isCorrect: null == isCorrect ? _self.isCorrect : isCorrect // ignore: cast_nullable_to_non_nullable
 as bool,userAnswer: freezed == userAnswer ? _self.userAnswer : userAnswer // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,isSkipped: null == isSkipped ? _self.isSkipped : isSkipped // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

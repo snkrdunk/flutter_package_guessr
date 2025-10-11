@@ -37,6 +37,7 @@ _Round _$RoundFromJson(Map<String, dynamic> json) => _Round(
   timeRemaining: (json['timeRemaining'] as num).toInt(),
   isCorrect: json['isCorrect'] as bool,
   userAnswer: json['userAnswer'] as String?,
+  isSkipped: json['isSkipped'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$RoundToJson(_Round instance) => <String, dynamic>{
@@ -44,4 +45,5 @@ Map<String, dynamic> _$RoundToJson(_Round instance) => <String, dynamic>{
   'timeRemaining': instance.timeRemaining,
   'isCorrect': instance.isCorrect,
   'userAnswer': instance.userAnswer,
+  'isSkipped': instance.isSkipped,
 };

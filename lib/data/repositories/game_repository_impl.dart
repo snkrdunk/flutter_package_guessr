@@ -15,7 +15,7 @@ class GameRepositoryImpl implements GameRepository {
     final game = Game(
       id: _uuid.v4(),
       playerName: playerName,
-      totalRounds: 6, // パッケージ数に合わせて修正
+      totalRounds: 11, // パッケージ数に合わせて修正
       rounds: [],
       correctCount: 0,
       totalScore: 0,
@@ -57,7 +57,8 @@ class GameRepositoryImpl implements GameRepository {
       throw Exception('Game not found: $gameId');
     }
 
-    final isCorrect = userAnswer == packageName;
+    final isSkipped = userAnswer == 'SKIP';
+    final isCorrect = !isSkipped && userAnswer == packageName;
     final score = isCorrect ? 100 + timeRemaining : 0;
 
     final newRound = Round(
@@ -65,6 +66,7 @@ class GameRepositoryImpl implements GameRepository {
       timeRemaining: timeRemaining,
       isCorrect: isCorrect,
       userAnswer: userAnswer,
+      isSkipped: isSkipped,
     );
 
     final updatedGame = game.copyWith(

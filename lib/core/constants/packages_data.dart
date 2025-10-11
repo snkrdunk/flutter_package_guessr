@@ -15,29 +15,48 @@ class PackagesData {
       'logoUrl': null,
       'snippets': [
         '''
-@riverpod
-class Counter extends _\$Counter {
-  @override
-  int build() => 0;
+class ProviderElementBase<State> {
+  final Set<ProviderSubscription> _dependencies = {};
 
-  void increment() => state++;
-}
-''',
-        '''
-final counterProvider = StateProvider<int>((ref) => 0);
+  void _trackDependency(ProviderSubscription dependency) {
+    _dependencies.add(dependency);
+  }
 
-class MyWidget extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final count = ref.watch(counterProvider);
-    return Text('\$count');
+  void _clearDependencies() {
+    for (final dependency in _dependencies) {
+      dependency.close();
+    }
+    _dependencies.clear();
   }
 }
 ''',
         '''
-ref.listen<int>(counterProvider, (previous, next) {
-  print('Counter changed from \$previous to \$next');
-});
+mixin AutoDisposeProviderMixin<State> {
+  bool _shouldAutoDispose = true;
+
+  void markAsManuallyDisposed() {
+    _shouldAutoDispose = false;
+  }
+
+  void autoDispose() {
+    if (_shouldAutoDispose) {
+      dispose();
+    }
+  }
+}
+''',
+        '''
+class Provider<T> {
+  final Create<T> _create;
+
+  T create(ProviderRef ref) {
+    final state = _create(ref);
+    ref.onDispose(() {
+      // Cleanup logic
+    });
+    return state;
+  }
+}
 ''',
       ],
       'updatedAt': '2024-01-15T10:00:00.000Z',
@@ -55,32 +74,43 @@ ref.listen<int>(counterProvider, (previous, next) {
       'logoUrl': null,
       'snippets': [
         '''
-final router = GoRouter(
-  routes: [
-    GoRoute(
-      path: '/',
-      builder: (context, state) => HomeScreen(),
-    ),
-    GoRoute(
-      path: '/details/:id',
-      builder: (context, state) {
-        final id = state.pathParameters['id']!;
-        return DetailsScreen(id: id);
-      },
-    ),
-  ],
+GoRouter.routingConfig({
+  required ValueListenable<RoutingConfig> routingConfig,
+}) {
+  configuration = RouteConfiguration(
+    routingConfig,
+    navigatorKey: navigatorKey,
+    extraCodec: extraCodec,
+  );
+
+  routeInformationParser = GoRouteInformationParser(
+    onParserException: parserExceptionHandler,
+    configuration: configuration,
+  );
+}
+''',
+        '''
+String namedLocation(
+  String name, {
+  Map<String, String> pathParameters = const <String, String>{},
+  Map<String, dynamic> queryParameters = const <String, dynamic>{},
+}) => configuration.namedLocation(
+  name,
+  pathParameters: pathParameters,
+  queryParameters: queryParameters,
 );
 ''',
         '''
-context.go('/details/123');
-context.push('/settings');
-context.pop();
-''',
-        '''
-@override
-Widget build(BuildContext context) {
-  return MaterialApp.router(
-    routerConfig: router,
+void go(String location, {Object? extra}) {
+  log('going to \$location');
+  routeInformationProvider.go(location, extra: extra);
+}
+
+Future<T?> push<T>(String location, {Object? extra}) async {
+  return routeInformationProvider.push<T>(
+    location,
+    base: routerDelegate.currentConfiguration,
+    extra: extra,
   );
 }
 ''',
@@ -100,26 +130,40 @@ Widget build(BuildContext context) {
       'logoUrl': null,
       'snippets': [
         '''
-@freezed
-class Person with _\$Person {
-  const factory Person({
-    required String name,
-    required int age,
-  }) = _Person;
+final commonCopyWith = data.options.copyWith
+  ? CopyWith(
+      parents: data.parents,
+      clonedClassName: data.name,
+      readableProperties: data.properties.readableProperties,
+      cloneableProperties: data.properties.cloneableProperties,
+      genericsDefinition: data.genericsDefinitionTemplate,
+      genericsParameter: data.genericsParameterTemplate,
+      data: data,
+    )
+  : null;
+''',
+        '''
+yield patterns(data);
 
-  factory Person.fromJson(Map<String, dynamic> json)
-    => _\$PersonFromJson(json);
+for (final constructor in data.constructors) {
+  yield Concrete(
+    data: data,
+    constructor: constructor,
+    commonProperties: data.properties.readableProperties,
+    globalData: globalData,
+    copyWith: constructor.parameters.isNotEmpty ? CopyWith(...) : null,
+  );
 }
 ''',
         '''
-final person = Person(name: 'John', age: 30);
-final updated = person.copyWith(age: 31);
-''',
-        '''
-@freezed
-sealed class Result<T> with _\$Result<T> {
-  const factory Result.success(T data) = Success<T>;
-  const factory Result.error(String message) = Error<T>;
+Iterable<Object> _generateForData(Library globalData, Class data) sync* {
+  if (data.options.fromJson) {
+    yield FromJson(data);
+  }
+
+  if (data.options.toJson) {
+    yield ToJson(data);
+  }
 }
 ''',
       ],
@@ -138,27 +182,45 @@ sealed class Result<T> with _\$Result<T> {
       'logoUrl': null,
       'snippets': [
         '''
-final dio = Dio();
-final response = await dio.get('https://api.example.com/users');
-print(response.data);
-''',
-        '''
-dio.interceptors.add(
-  InterceptorsWrapper(
-    onRequest: (options, handler) {
-      options.headers['Authorization'] = 'Bearer \$token';
-      return handler.next(options);
-    },
-  ),
+Future<dynamic> future = Future<dynamic>(
+  () => InterceptorState(requestOptions),
 );
+
+for (final interceptor in interceptors) {
+  final fun = interceptor is QueuedInterceptor
+    ? interceptor._handleRequest
+    : interceptor.onRequest;
+  future = future.then(requestInterceptorWrapper(fun));
+}
 ''',
         '''
-try {
-  await dio.post('/login', data: {'email': email, 'password': password});
-} on DioException catch (e) {
-  if (e.response?.statusCode == 401) {
-    print('Unauthorized');
+Future<Stream<Uint8List>?> _transformData(RequestOptions options) async {
+  if (data is FormData) {
+    options.headers[Headers.contentTypeHeader] =
+      '\${Headers.multipartFormDataContentType}; boundary=\${data.boundary}';
+    stream = data.finalize();
+  } else {
+    final transformed = await transformer.transformRequest(options);
+    bytes = utf8.encode(transformed);
   }
+  return addProgress(stream, length, options);
+}
+''',
+        '''
+FutureOr<dynamic> errorInterceptorWrapper(InterceptorErrorCallback cb) {
+  return (dynamic error) {
+    final state = error is InterceptorState
+      ? error
+      : InterceptorState(assureDioException(error, requestOptions));
+
+    if (state.type == InterceptorResultType.next) {
+      return listenCancelForAsyncTask(
+        requestOptions.cancelToken,
+        Future(handleError),
+      );
+    }
+    throw error;
+  };
 }
 ''',
       ],
@@ -177,25 +239,42 @@ try {
       'logoUrl': null,
       'snippets': [
         '''
-class CounterBloc extends Bloc<CounterEvent, int> {
-  CounterBloc() : super(0) {
-    on<Increment>((event, emit) => emit(state + 1));
-    on<Decrement>((event, emit) => emit(state - 1));
-  }
-}
-''',
-        '''
-BlocProvider(
-  create: (context) => CounterBloc(),
-  child: BlocBuilder<CounterBloc, int>(
-    builder: (context, count) {
-      return Text('\$count');
-    },
-  ),
+return BlocListener<B, S>(
+  bloc: _bloc,
+  listenWhen: widget.buildWhen,
+  listener: (context, state) => setState(() => _state = state),
+  child: widget.build(context, _state)
 );
 ''',
         '''
-context.read<CounterBloc>().add(Increment());
+typedef BlocBuilderCondition<S> = bool Function(S previous, S current);
+
+BlocBuilder<BlocA, BlocAState>(
+  buildWhen: (previous, current) {
+    // return true/false to determine rebuild
+  },
+  builder: (context, state) {
+    // return widget based on state
+  }
+)
+''',
+        '''
+@override
+void initState() {
+  super.initState();
+  _bloc = widget.bloc ?? context.read<B>();
+  _state = _bloc.state;
+}
+
+@override
+void didUpdateWidget(BlocBuilderBase<B, S> oldWidget) {
+  super.didUpdateWidget(oldWidget);
+  final currentBloc = widget.bloc ?? _bloc;
+  if (oldWidget.bloc != currentBloc) {
+    _bloc = currentBloc;
+    _state = _bloc.state;
+  }
+}
 ''',
       ],
       'updatedAt': '2024-01-14T10:00:00.000Z',
@@ -213,22 +292,286 @@ context.read<CounterBloc>().add(Increment());
       'logoUrl': null,
       'snippets': [
         '''
-final prefs = await SharedPreferences.getInstance();
-await prefs.setString('username', 'John');
-final username = prefs.getString('username');
+static Future<Map<String, Object>> _getSharedPreferencesMap() async {
+  if (_prefixHasBeenChanged) {
+    return await _store.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: _prefix, allowList: _allowList)
+      )
+    );
+  } else {
+    return await _store.getAll();
+  }
+}
 ''',
         '''
-await prefs.setInt('counter', 10);
-await prefs.setBool('isLoggedIn', true);
-await prefs.setStringList('items', ['a', 'b', 'c']);
+Future<void> reload() async {
+  final Map<String, Object> preferences =
+    await SharedPreferences._getSharedPreferencesMap();
+  _preferenceCache.clear();
+  _preferenceCache.addAll(preferences);
+}
 ''',
         '''
-final keys = prefs.getKeys();
-await prefs.remove('username');
-await prefs.clear();
+Future<bool> _setValue(String valueType, String key, Object value) {
+  final String prefixedKey = '\$_prefix\$key';
+  if (value is List<String>) {
+    _preferenceCache[key] = value.toList();
+  } else {
+    _preferenceCache[key] = value;
+  }
+  return _store.setValue(valueType, prefixedKey, value);
+}
 ''',
       ],
       'updatedAt': '2024-01-05T10:00:00.000Z',
+    },
+    {
+      'name': 'provider',
+      'publisher': 'dash-overflow.net',
+      'description': 'A wrapper around InheritedWidget to make them easier to use and more reusable',
+      'version': '6.1.5',
+      'likes': 10800,
+      'pubPoints': 150,
+      'popularity': 100,
+      'platforms': ['Flutter', 'Dart'],
+      'tags': ['state-management', 'inherited-widget'],
+      'logoUrl': null,
+      'snippets': [
+        '''
+static T of<T>(BuildContext context, {bool listen = true}) {
+  assert(context.owner!.debugBuilding || listen == false);
+
+  final inheritedElement = _inheritedElementOf<T>(context);
+
+  if (listen) {
+    context.dependOnInheritedWidgetOfExactType<_InheritedProviderScope<T?>>();
+  }
+
+  if (value is! T) {
+    throw ProviderNullException(T, context.widget.runtimeType);
+  }
+  return value as T;
+}
+''',
+        '''
+static List<SingleChildWidget> _collapseProviders(
+  List<SingleChildWidget> providers,
+) {
+  for (final provider in providers) {
+    if (provider is InheritedProvider) {
+      final builder = (Widget? child) =>
+        provider._buildWithChild(child, key: provider.key);
+      previous = builder;
+    }
+  }
+  return [SingleChildBuilder(builder: (context, child) => previous!(child))];
+}
+''',
+        '''
+void _listen() {
+  if (value is ChangeNotifier) {
+    (value as ChangeNotifier).addListener(_handleValueChanged);
+  }
+}
+
+void _handleValueChanged() {
+  setState(() {});
+}
+''',
+      ],
+      'updatedAt': '2024-01-20T10:00:00.000Z',
+    },
+    {
+      'name': 'flutter_hooks',
+      'publisher': 'dash-overflow.net',
+      'description': 'A Flutter implementation of React hooks for enhanced code reuse',
+      'version': '0.21.3',
+      'likes': 2300,
+      'pubPoints': 160,
+      'popularity': 89,
+      'platforms': ['Flutter'],
+      'tags': ['hooks', 'state-management', 'reusable'],
+      'logoUrl': null,
+      'snippets': [
+        '''
+void _unmountAllRemainingHooks() {
+  if (_currentHookState != null) {
+    _needDispose ??= LinkedList();
+    while (_currentHookState != null) {
+      final previousHookState = _currentHookState!;
+      _currentHookState = _currentHookState!.next;
+      previousHookState.unlink();
+      _needDispose!.add(previousHookState);
+    }
+  }
+}
+''',
+        '''
+R _use<R>(Hook<R> hook) {
+  if (hook.runtimeType != _currentHookState!.value.hook.runtimeType) {
+    _unmountAllRemainingHooks();
+    throw StateError(
+      'Type mismatch: \${_currentHookState!.value.hook.runtimeType} != \${hook.runtimeType}'
+    );
+  }
+  return _currentHookState!.value.build(context);
+}
+''',
+        '''
+@override
+Widget build() {
+  final mustRebuild = _isOptionalRebuild != true ||
+    _shouldRebuildQueue.any((cb) => cb.value());
+
+  if (!mustRebuild) {
+    return _buildCache!;
+  }
+
+  _currentHookState = _hooks.isEmpty ? null : _hooks.first;
+  HookElement._currentHookElement = this;
+  _buildCache = super.build();
+  return _buildCache!;
+}
+''',
+      ],
+      'updatedAt': '2024-01-18T10:00:00.000Z',
+    },
+    {
+      'name': 'dart_frog',
+      'publisher': 'dart-frog.dev',
+      'description': 'A fast, minimalistic backend framework for Dart',
+      'version': '1.2.4',
+      'likes': 815,
+      'pubPoints': 160,
+      'popularity': 85,
+      'platforms': ['Dart'],
+      'tags': ['backend', 'server', 'framework'],
+      'logoUrl': null,
+      'snippets': [
+        '''
+typedef Middleware = Handler Function(Handler handler);
+''',
+        '''
+extension HandlerUse on Handler {
+  Handler use(Middleware middleware) {
+    const pipeline = Pipeline();
+    return pipeline
+      .addMiddleware(middleware)
+      .addHandler(this);
+  }
+}
+''',
+        '''
+class Pipeline {
+  final List<Middleware> _middleware = [];
+
+  Pipeline addMiddleware(Middleware middleware) {
+    _middleware.add(middleware);
+    return this;
+  }
+
+  Handler addHandler(Handler handler) {
+    return _middleware.reversed.fold(
+      handler,
+      (handler, middleware) => middleware(handler),
+    );
+  }
+}
+''',
+      ],
+      'updatedAt': '2024-01-16T10:00:00.000Z',
+    },
+    {
+      'name': 'flutter_inappwebview',
+      'publisher': 'inappwebview.dev',
+      'description': 'A Flutter plugin for inline webview, headless webview, and in-app browser',
+      'version': '6.1.5',
+      'likes': 2750,
+      'pubPoints': 140,
+      'popularity': 96,
+      'platforms': ['Flutter'],
+      'tags': ['webview', 'browser', 'web'],
+      'logoUrl': null,
+      'snippets': [
+        '''
+void addJavaScriptHandler({
+  required String handlerName,
+  required Function callback
+}) => platform.addJavaScriptHandler(
+  handlerName: handlerName,
+  callback: callback
+);
+''',
+        '''
+InAppWebViewController.fromPlatformCreationParams({
+  required PlatformInAppWebViewControllerCreationParams params,
+}) : this.fromPlatform(
+  platform: PlatformInAppWebViewController(params)
+);
+''',
+        '''
+Future<void> loadUrl({
+  required URLRequest urlRequest,
+  WebUri? allowingReadAccessTo
+}) => platform.loadUrl(
+  urlRequest: urlRequest,
+  allowingReadAccessTo: allowingReadAccessTo
+);
+''',
+      ],
+      'updatedAt': '2024-01-12T10:00:00.000Z',
+    },
+    {
+      'name': 'build_runner',
+      'publisher': 'tools.dart.dev',
+      'description': 'A build system for Dart code generation and modular compilation',
+      'version': '2.9.0',
+      'likes': 2200,
+      'pubPoints': 160,
+      'popularity': 99,
+      'platforms': ['Dart'],
+      'tags': ['codegen', 'build', 'tools'],
+      'logoUrl': null,
+      'snippets': [
+        '''
+Future<BuildResult> run(
+  List<BuilderApplication> builders,
+  BuildPhaseFactory phaseFactory,
+) async {
+  for (final application in builders) {
+    final phase = phaseFactory.createPhase(application);
+    await phase.run();
+  }
+  return BuildResult(BuildStatus.success, []);
+}
+''',
+        '''
+class AssetGraph {
+  final Map<AssetId, AssetNode> _nodes = {};
+
+  void add(AssetId id, Iterable<AssetId> outputs) {
+    _nodes[id] = AssetNode(id, outputs.toSet());
+  }
+
+  bool contains(AssetId id) => _nodes.containsKey(id);
+}
+''',
+        '''
+class BuilderApplication {
+  final String builderKey;
+  final List<String> generateFor;
+  final BuilderOptions options;
+
+  const BuilderApplication(
+    this.builderKey,
+    this.generateFor,
+    this.options,
+  );
+}
+''',
+      ],
+      'updatedAt': '2024-01-14T10:00:00.000Z',
     },
   ];
 }

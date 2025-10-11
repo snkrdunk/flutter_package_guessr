@@ -72,8 +72,11 @@ Future<Question?> currentQuestion(
     return null;
   }
 
-  // 既に出題されたパッケージ名のリスト
-  final usedPackages = game.rounds.map((r) => r.packageName).toList();
+  // SKIPされていないラウンドのパッケージ名のみを除外リストに追加
+  final usedPackages = game.rounds
+      .where((r) => !r.isSkipped)
+      .map((r) => r.packageName)
+      .toList();
 
   final packageRepository = ref.read(packageRepositoryProvider);
   return await packageRepository.generateQuestion(usedPackages);

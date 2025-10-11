@@ -26,6 +26,7 @@ abstract class Round with _$Round {
     required int timeRemaining,
     required bool isCorrect,
     String? userAnswer,
+    @Default(false) bool isSkipped,
   }) = _Round;
 
   factory Round.fromJson(Map<String, dynamic> json) => _$RoundFromJson(json);
