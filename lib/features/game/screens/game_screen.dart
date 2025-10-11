@@ -178,17 +178,20 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                      // ラウンド表示
-                      Text(
-                        'Round $currentRoundNumber / ${game.totalRounds}',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                      // ラウンドとタイマーを1行に
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Round $currentRoundNumber / ${game.totalRounds}',
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                          const SizedBox(width: 16),
+                          const TimerDisplay(),
+                        ],
                       ),
-                      const SizedBox(height: 12),
-
-                      // タイマー
-                      const TimerDisplay(),
                       const SizedBox(height: 16),
 
                       // コードスニペット

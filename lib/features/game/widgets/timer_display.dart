@@ -13,12 +13,12 @@ class TimerDisplay extends ConsumerWidget {
     final isFinished = ref.watch(isTimerFinishedProvider);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: isWarning
             ? Colors.red.withOpacity(0.1)
             : Colors.indigo.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isWarning ? Colors.red : Colors.indigo,
           width: 2,
@@ -32,13 +32,13 @@ class TimerDisplay extends ConsumerWidget {
                 ? Icons.timer_off
                 : Icons.timer,
             color: isWarning ? Colors.red : Colors.indigo,
-            size: 28,
+            size: 18,
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 6),
           Text(
             '${seconds}秒',
             style: TextStyle(
-              fontSize: 28,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
               color: isWarning ? Colors.red : Colors.indigo,
             ),
