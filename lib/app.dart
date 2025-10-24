@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'features/router/app_router.dart';
 
 class MyApp extends ConsumerWidget {
@@ -8,7 +9,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp.router(
-      title: 'Flutter Package Guesser',
+      title: 'Flutter Package Guessr',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
@@ -17,13 +18,8 @@ class MyApp extends ConsumerWidget {
         ),
         useMaterial3: true,
         textTheme: const TextTheme(
-          displayLarge: TextStyle(
-            fontSize: 48,
-            fontWeight: FontWeight.bold,
-          ),
-          titleMedium: TextStyle(
-            fontSize: 18,
-          ),
+          displayLarge: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+          titleMedium: TextStyle(fontSize: 18),
         ),
       ),
       routerConfig: goRouter,

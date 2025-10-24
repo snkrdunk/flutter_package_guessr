@@ -1,9 +1,10 @@
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// ローカルストレージを管理するクラス
 class LocalStorage {
-  static const String _keyPrefix = 'flutter_package_guesser_';
+  static const String _keyPrefix = 'flutter_package_guessr_';
   static const String _gamesKey = '${_keyPrefix}games';
   static const String _lastPlayerNameKey = '${_keyPrefix}last_player_name';
 

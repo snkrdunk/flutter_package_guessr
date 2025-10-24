@@ -61,7 +61,7 @@ class PackageRepositoryImpl implements PackageRepository {
     // ランダムに正解パッケージを選択
     final targetPackage = availablePackages[_random.nextInt(availablePackages.length)];
 
-    // 他のパッケージから11個選択して候補を作成（合計12個）
+    // 他のパッケージから10個選択して候補を作成（合計11個、SKIPを含めて12個）
     final otherPackages = availablePackages
         .where((p) => p.name != targetPackage.name)
         .toList()
@@ -69,7 +69,7 @@ class PackageRepositoryImpl implements PackageRepository {
 
     final candidatePackages = [
       targetPackage,
-      ...otherPackages.take(11),
+      ...otherPackages.take(10),
     ];
 
     // 候補をシャッフル

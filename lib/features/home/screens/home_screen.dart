@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../widgets/start_button.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -18,21 +19,21 @@ class HomeScreen extends ConsumerWidget {
               children: [
                 // タイトル
                 Text(
-                  'Flutter Package Guesser',
+                  'Flutter Package Guessr',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).primaryColor,
-                      ),
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).primaryColor,
+                  ),
                 ),
                 const SizedBox(height: 16),
 
                 // サブタイトル
                 Text(
                   'どのパッケージのコードか当てよう！',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.grey[600],
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleMedium?.copyWith(color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 64),
 

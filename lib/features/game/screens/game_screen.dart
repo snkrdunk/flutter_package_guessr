@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../providers/game_provider.dart';
 import '../providers/timer_provider.dart';
-import '../widgets/code_snippet_viewer.dart';
-import '../widgets/timer_display.dart';
 import '../widgets/answer_buttons.dart';
+import '../widgets/code_snippet_viewer.dart';
 import '../widgets/hint_display.dart';
+import '../widgets/timer_display.dart';
 
 class GameScreen extends ConsumerStatefulWidget {
   final String gameId;
 
-  const GameScreen({
-    super.key,
-    required this.gameId,
-  });
+  const GameScreen({super.key, required this.gameId});
 
   @override
   ConsumerState<GameScreen> createState() => _GameScreenState();
@@ -54,11 +52,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     // 回答を送信して更新されたゲームデータを取得
     final updatedGame = await ref
         .read(currentGameProvider(widget.gameId).notifier)
-        .submitAnswer(
-          answer,
-          timeRemaining,
-          _currentQuestionPackageName!,
-        );
+        .submitAnswer(answer, timeRemaining, _currentQuestionPackageName!);
 
     if (!mounted || updatedGame == null) {
       if (mounted) {
@@ -101,11 +95,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   Widget build(BuildContext context) {
     // 回答処理中はローディング表示
     if (_isProcessingAnswer) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     final gameAsync = ref.watch(currentGameProvider(widget.gameId));
@@ -122,7 +112,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Package Guesser'),
+        title: const Text('Package Guessr'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -153,17 +143,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       body: gameAsync.when(
         data: (game) {
           if (game == null) {
-            return const Center(
-              child: Text('ゲームが見つかりません'),
-            );
+            return const Center(child: Text('ゲームが見つかりません'));
           }
 
           return questionAsync.when(
             data: (question) {
               if (question == null) {
-                return const Center(
-                  child: Text('問題の読み込みに失敗しました'),
-                );
+                return const Center(child: Text('問題の読み込みに失敗しました'));
               }
 
               // 現在の問題のパッケージ名を保存
@@ -178,70 +164,60 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                      // ラウンドとタイマーを1行に
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Round $currentRoundNumber / ${game.totalRounds}',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                          ),
-                          const SizedBox(width: 16),
-                          const TimerDisplay(),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-
-                      // コードスニペット
-                      CodeSnippetViewer(
-                        snippets: question.snippets,
-                      ),
-                      const SizedBox(height: 16),
-
-                      // ヒント表示
-                      HintDisplay(
-                        package: question.targetPackage,
-                        secondsRemaining: timerSeconds,
-                      ),
-                      const SizedBox(height: 16),
-
-                      // 質問
-                      Text(
-                        'このコードはどのパッケージのものでしょうか？',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
+                        // ラウンドとタイマーを1行に
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Round $currentRoundNumber / ${game.totalRounds}',
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
                             ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 12),
+                            const SizedBox(width: 16),
+                            const TimerDisplay(),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
 
-                      // 回答ボタン（SKIPオプションを追加）
-                      AnswerButtons(
-                        candidates: [...question.candidates, 'SKIP'],
-                        onAnswer: _handleAnswer,
-                        isEnabled: timerSeconds > 0,
-                      ),
-                      const SizedBox(height: 16),
-                    ],
+                        // コードスニペット
+                        CodeSnippetViewer(snippets: question.snippets),
+                        const SizedBox(height: 16),
+
+                        // ヒント表示
+                        HintDisplay(
+                          package: question.targetPackage,
+                          secondsRemaining: timerSeconds,
+                        ),
+                        const SizedBox(height: 16),
+
+                        // 質問
+                        Text(
+                          'このコードはどのパッケージのものでしょうか？',
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w600),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 12),
+
+                        // 回答ボタン（SKIPオプションを追加）
+                        AnswerButtons(
+                          candidates: [...question.candidates, 'SKIP'],
+                          onAnswer: _handleAnswer,
+                          isEnabled: timerSeconds > 0,
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                    ),
                   ),
-                ),
                 ),
               );
             },
-            loading: () => const Center(
-              child: CircularProgressIndicator(),
-            ),
+            loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, stack) => Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.error_outline,
-                    size: 64,
-                    color: Colors.red,
-                  ),
+                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
                   const SizedBox(height: 16),
                   Text(
                     '問題の読み込みに失敗しました',
@@ -257,18 +233,12 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             ),
           );
         },
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
-        ),
+        loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.error_outline,
-                size: 64,
-                color: Colors.red,
-              ),
+              const Icon(Icons.error_outline, size: 64, color: Colors.red),
               const SizedBox(height: 16),
               Text(
                 'ゲームの読み込みに失敗しました',

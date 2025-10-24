@@ -1,6 +1,6 @@
 {
-    "name": "flutter_package_guesser",
-    "short_name": "flutter_package_guesser",
+    "name": "flutter_package_guessr",
+    "short_name": "flutter_package_guessr",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

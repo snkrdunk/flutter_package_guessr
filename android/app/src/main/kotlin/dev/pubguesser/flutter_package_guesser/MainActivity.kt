@@ -1,4 +1,4 @@
-package dev.pubguesser.flutter_package_guesser
+package dev.pubguessr.flutter_package_guessr
 
 import io.flutter.embedding.android.FlutterActivity
 

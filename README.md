@@ -1,4 +1,4 @@
-# flutter_package_guesser
+# flutter_package_guessr
 
 A new Flutter project.
 
