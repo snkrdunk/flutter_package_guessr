@@ -6,6 +6,8 @@ class AnswerButtons extends StatelessWidget {
   final Function(String) onAnswer;
   final bool isEnabled;
   final bool canSkip;
+  final String? selectedAnswer;
+  final String? correctAnswer;
 
   const AnswerButtons({
     super.key,
@@ -13,6 +15,8 @@ class AnswerButtons extends StatelessWidget {
     required this.onAnswer,
     this.isEnabled = true,
     this.canSkip = true,
+    this.selectedAnswer,
+    this.correctAnswer,
   });
 
   @override
@@ -29,10 +33,17 @@ class AnswerButtons extends StatelessWidget {
           alignment: WrapAlignment.center,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: normalCandidates.map((candidate) {
+            final isSelected = selectedAnswer == candidate;
+            final isCorrectChoice = correctAnswer == candidate;
+            final showFeedback = selectedAnswer != null && correctAnswer != null;
+
             return IntrinsicWidth(
               child: _AnswerButton(
                 label: candidate,
                 onTap: isEnabled ? () => onAnswer(candidate) : null,
+                isSelected: isSelected,
+                isCorrect: isCorrectChoice,
+                showFeedback: showFeedback,
               ),
             );
           }).toList(),
@@ -51,10 +62,16 @@ class AnswerButtons extends StatelessWidget {
 class _AnswerButton extends StatefulWidget {
   final String label;
   final VoidCallback? onTap;
+  final bool isSelected;
+  final bool isCorrect;
+  final bool showFeedback;
 
   const _AnswerButton({
     required this.label,
     this.onTap,
+    this.isSelected = false,
+    this.isCorrect = false,
+    this.showFeedback = false,
   });
 
   @override
@@ -67,6 +84,30 @@ class _AnswerButtonState extends State<_AnswerButton> {
   @override
   Widget build(BuildContext context) {
     final isEnabled = widget.onTap != null;
+
+    // フィードバック表示時の色とアイコンを決定
+    Color? feedbackColor;
+    IconData? feedbackIcon;
+    Color? feedbackTextColor;
+
+    if (widget.showFeedback) {
+      if (widget.isSelected && widget.isCorrect) {
+        // 選択した回答が正解
+        feedbackColor = Colors.green;
+        feedbackIcon = Icons.check_circle;
+        feedbackTextColor = Colors.white;
+      } else if (widget.isSelected && !widget.isCorrect) {
+        // 選択した回答が不正解
+        feedbackColor = Colors.red;
+        feedbackIcon = Icons.cancel;
+        feedbackTextColor = Colors.white;
+      } else if (!widget.isSelected && widget.isCorrect) {
+        // 正解の選択肢（ユーザーが選ばなかった）
+        feedbackColor = Colors.green.shade100;
+        feedbackIcon = Icons.check_circle_outline;
+        feedbackTextColor = Colors.green.shade800;
+      }
+    }
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
@@ -81,37 +122,65 @@ class _AnswerButtonState extends State<_AnswerButton> {
             constraints: const BoxConstraints(minWidth: 60),
             padding: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
-              color: _isHovered && isEnabled
-                  ? Colors.indigo
-                  : Colors.grey.shade200,
+              color: feedbackColor ??
+                  (_isHovered && isEnabled
+                      ? Colors.indigo
+                      : Colors.grey.shade200),
               borderRadius: BorderRadius.circular(15),
               border: Border.all(
-                color: isEnabled ? Colors.grey.shade300 : Colors.grey.shade300,
-                width: 1,
+                color: feedbackColor ??
+                    (isEnabled ? Colors.grey.shade300 : Colors.grey.shade300),
+                width: feedbackColor != null ? 2 : 1,
               ),
-              boxShadow: _isHovered && isEnabled
+              boxShadow: feedbackColor != null
                   ? [
                       BoxShadow(
-                        color: Colors.indigo.withValues(alpha: 0.3),
-                        blurRadius: 8,
+                        color: feedbackColor.withValues(alpha: 0.4),
+                        blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
                     ]
-                  : null,
+                  : (_isHovered && isEnabled
+                      ? [
+                          BoxShadow(
+                            color: Colors.indigo.withValues(alpha: 0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ]
+                      : null),
             ),
             child: Center(
-              child: Text(
-                widget.label,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: _isHovered && isEnabled
-                      ? Colors.white
-                      : (isEnabled ? Colors.grey.shade800 : Colors.grey.shade400),
-                ),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (feedbackIcon != null) ...[
+                    Icon(
+                      feedbackIcon,
+                      size: 16,
+                      color: feedbackTextColor,
+                    ),
+                    const SizedBox(width: 6),
+                  ],
+                  Flexible(
+                    child: Text(
+                      widget.label,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: feedbackTextColor ??
+                            (_isHovered && isEnabled
+                                ? Colors.white
+                                : (isEnabled
+                                    ? Colors.grey.shade800
+                                    : Colors.grey.shade400)),
+                      ),
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

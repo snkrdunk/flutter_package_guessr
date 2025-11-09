@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../providers/game_provider.dart';
 import '../providers/timer_provider.dart';
 import '../widgets/answer_buttons.dart';
+import '../widgets/answer_feedback_dialog.dart';
 import '../widgets/code_snippet_viewer.dart';
 import '../widgets/hint_display.dart';
 import '../widgets/timer_display.dart';
@@ -21,6 +22,8 @@ class GameScreen extends ConsumerStatefulWidget {
 class _GameScreenState extends ConsumerState<GameScreen> {
   String? _currentQuestionPackageName;
   bool _isProcessingAnswer = false;
+  String? _selectedAnswer;
+  bool _showingFeedback = false;
 
   @override
   void initState() {
@@ -40,14 +43,43 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   Future<void> _handleAnswer(String answer) async {
     if (_currentQuestionPackageName == null || _isProcessingAnswer) return;
 
+    // 現在の問題データを取得
+    final questionAsync = ref.read(currentQuestionProvider(widget.gameId));
+    final question = questionAsync.value;
+    if (question == null) return;
+
     setState(() {
       _isProcessingAnswer = true;
+      _selectedAnswer = answer;
+      _showingFeedback = true;
     });
 
     // タイマーを停止
     ref.read(gameTimerProvider.notifier).stop();
 
     final timeRemaining = ref.read(gameTimerProvider);
+    final isSkipped = answer == 'SKIP';
+    final isCorrect = !isSkipped && answer == _currentQuestionPackageName;
+
+    // スキップ時以外はフィードバックを表示
+    if (!isSkipped) {
+      // ボタンのフィードバックを少し表示
+      await Future.delayed(const Duration(milliseconds: 300));
+
+      if (!mounted) return;
+
+      // フィードバックダイアログを表示（Next Roundボタンで閉じる）
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AnswerFeedbackDialog(
+          isCorrect: isCorrect,
+          targetPackage: question.targetPackage,
+        ),
+      );
+
+      if (!mounted) return;
+    }
 
     // 回答を送信して更新されたゲームデータを取得
     final updatedGame = await ref
@@ -58,6 +90,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       if (mounted) {
         setState(() {
           _isProcessingAnswer = false;
+          _showingFeedback = false;
+          _selectedAnswer = null;
         });
       }
       return;
@@ -80,6 +114,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       // 次の問題へ（タイマーをリセットして再開）
       setState(() {
         _isProcessingAnswer = false;
+        _showingFeedback = false;
+        _selectedAnswer = null;
       });
       ref.read(gameTimerProvider.notifier).reset();
       ref.read(gameTimerProvider.notifier).start();
@@ -93,8 +129,8 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // 回答処理中はローディング表示
-    if (_isProcessingAnswer) {
+    // 回答処理中（フィードバック表示中以外）はローディング表示
+    if (_isProcessingAnswer && !_showingFeedback) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
@@ -203,8 +239,11 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                         AnswerButtons(
                           candidates: [...question.candidates, 'SKIP'],
                           onAnswer: _handleAnswer,
-                          isEnabled: timerSeconds > 0,
+                          isEnabled: timerSeconds > 0 && !_showingFeedback,
                           canSkip: ref.watch(canSkipProvider(widget.gameId)),
+                          selectedAnswer: _showingFeedback ? _selectedAnswer : null,
+                          correctAnswer:
+                              _showingFeedback ? _currentQuestionPackageName : null,
                         ),
                         const SizedBox(height: 16),
                       ],
