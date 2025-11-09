@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Game {
 
- String get id; String get playerName; int get totalRounds; List<Round> get rounds; int get correctCount; int get totalScore; DateTime get createdAt; DateTime? get finishedAt;
+ String get id; String get playerName; int get totalRounds; List<Round> get rounds; int get correctCount; int get totalScore; DateTime get createdAt; DateTime? get finishedAt; bool get lastRoundWasSkipped;
 /// Create a copy of Game
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $GameCopyWith<Game> get copyWith => _$GameCopyWithImpl<Game>(this as Game, _$ide
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Game&&(identical(other.id, id) || other.id == id)&&(identical(other.playerName, playerName) || other.playerName == playerName)&&(identical(other.totalRounds, totalRounds) || other.totalRounds == totalRounds)&&const DeepCollectionEquality().equals(other.rounds, rounds)&&(identical(other.correctCount, correctCount) || other.correctCount == correctCount)&&(identical(other.totalScore, totalScore) || other.totalScore == totalScore)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.finishedAt, finishedAt) || other.finishedAt == finishedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Game&&(identical(other.id, id) || other.id == id)&&(identical(other.playerName, playerName) || other.playerName == playerName)&&(identical(other.totalRounds, totalRounds) || other.totalRounds == totalRounds)&&const DeepCollectionEquality().equals(other.rounds, rounds)&&(identical(other.correctCount, correctCount) || other.correctCount == correctCount)&&(identical(other.totalScore, totalScore) || other.totalScore == totalScore)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.finishedAt, finishedAt) || other.finishedAt == finishedAt)&&(identical(other.lastRoundWasSkipped, lastRoundWasSkipped) || other.lastRoundWasSkipped == lastRoundWasSkipped));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,playerName,totalRounds,const DeepCollectionEquality().hash(rounds),correctCount,totalScore,createdAt,finishedAt);
+int get hashCode => Object.hash(runtimeType,id,playerName,totalRounds,const DeepCollectionEquality().hash(rounds),correctCount,totalScore,createdAt,finishedAt,lastRoundWasSkipped);
 
 @override
 String toString() {
-  return 'Game(id: $id, playerName: $playerName, totalRounds: $totalRounds, rounds: $rounds, correctCount: $correctCount, totalScore: $totalScore, createdAt: $createdAt, finishedAt: $finishedAt)';
+  return 'Game(id: $id, playerName: $playerName, totalRounds: $totalRounds, rounds: $rounds, correctCount: $correctCount, totalScore: $totalScore, createdAt: $createdAt, finishedAt: $finishedAt, lastRoundWasSkipped: $lastRoundWasSkipped)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $GameCopyWith<$Res>  {
   factory $GameCopyWith(Game value, $Res Function(Game) _then) = _$GameCopyWithImpl;
 @useResult
 $Res call({
- String id, String playerName, int totalRounds, List<Round> rounds, int correctCount, int totalScore, DateTime createdAt, DateTime? finishedAt
+ String id, String playerName, int totalRounds, List<Round> rounds, int correctCount, int totalScore, DateTime createdAt, DateTime? finishedAt, bool lastRoundWasSkipped
 });
 
 
@@ -65,7 +65,7 @@ class _$GameCopyWithImpl<$Res>
 
 /// Create a copy of Game
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? playerName = null,Object? totalRounds = null,Object? rounds = null,Object? correctCount = null,Object? totalScore = null,Object? createdAt = null,Object? finishedAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? playerName = null,Object? totalRounds = null,Object? rounds = null,Object? correctCount = null,Object? totalScore = null,Object? createdAt = null,Object? finishedAt = freezed,Object? lastRoundWasSkipped = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,playerName: null == playerName ? _self.playerName : playerName // ignore: cast_nullable_to_non_nullable
@@ -75,7 +75,8 @@ as List<Round>,correctCount: null == correctCount ? _self.correctCount : correct
 as int,totalScore: null == totalScore ? _self.totalScore : totalScore // ignore: cast_nullable_to_non_nullable
 as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,finishedAt: freezed == finishedAt ? _self.finishedAt : finishedAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,
+as DateTime?,lastRoundWasSkipped: null == lastRoundWasSkipped ? _self.lastRoundWasSkipped : lastRoundWasSkipped // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -160,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String playerName,  int totalRounds,  List<Round> rounds,  int correctCount,  int totalScore,  DateTime createdAt,  DateTime? finishedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String playerName,  int totalRounds,  List<Round> rounds,  int correctCount,  int totalScore,  DateTime createdAt,  DateTime? finishedAt,  bool lastRoundWasSkipped)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Game() when $default != null:
-return $default(_that.id,_that.playerName,_that.totalRounds,_that.rounds,_that.correctCount,_that.totalScore,_that.createdAt,_that.finishedAt);case _:
+return $default(_that.id,_that.playerName,_that.totalRounds,_that.rounds,_that.correctCount,_that.totalScore,_that.createdAt,_that.finishedAt,_that.lastRoundWasSkipped);case _:
   return orElse();
 
 }
@@ -181,10 +182,10 @@ return $default(_that.id,_that.playerName,_that.totalRounds,_that.rounds,_that.c
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String playerName,  int totalRounds,  List<Round> rounds,  int correctCount,  int totalScore,  DateTime createdAt,  DateTime? finishedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String playerName,  int totalRounds,  List<Round> rounds,  int correctCount,  int totalScore,  DateTime createdAt,  DateTime? finishedAt,  bool lastRoundWasSkipped)  $default,) {final _that = this;
 switch (_that) {
 case _Game():
-return $default(_that.id,_that.playerName,_that.totalRounds,_that.rounds,_that.correctCount,_that.totalScore,_that.createdAt,_that.finishedAt);case _:
+return $default(_that.id,_that.playerName,_that.totalRounds,_that.rounds,_that.correctCount,_that.totalScore,_that.createdAt,_that.finishedAt,_that.lastRoundWasSkipped);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +202,10 @@ return $default(_that.id,_that.playerName,_that.totalRounds,_that.rounds,_that.c
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String playerName,  int totalRounds,  List<Round> rounds,  int correctCount,  int totalScore,  DateTime createdAt,  DateTime? finishedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String playerName,  int totalRounds,  List<Round> rounds,  int correctCount,  int totalScore,  DateTime createdAt,  DateTime? finishedAt,  bool lastRoundWasSkipped)?  $default,) {final _that = this;
 switch (_that) {
 case _Game() when $default != null:
-return $default(_that.id,_that.playerName,_that.totalRounds,_that.rounds,_that.correctCount,_that.totalScore,_that.createdAt,_that.finishedAt);case _:
+return $default(_that.id,_that.playerName,_that.totalRounds,_that.rounds,_that.correctCount,_that.totalScore,_that.createdAt,_that.finishedAt,_that.lastRoundWasSkipped);case _:
   return null;
 
 }
@@ -216,7 +217,7 @@ return $default(_that.id,_that.playerName,_that.totalRounds,_that.rounds,_that.c
 @JsonSerializable()
 
 class _Game implements Game {
-  const _Game({required this.id, required this.playerName, required this.totalRounds, required final  List<Round> rounds, required this.correctCount, required this.totalScore, required this.createdAt, this.finishedAt}): _rounds = rounds;
+  const _Game({required this.id, required this.playerName, required this.totalRounds, required final  List<Round> rounds, required this.correctCount, required this.totalScore, required this.createdAt, this.finishedAt, this.lastRoundWasSkipped = false}): _rounds = rounds;
   factory _Game.fromJson(Map<String, dynamic> json) => _$GameFromJson(json);
 
 @override final  String id;
@@ -233,6 +234,7 @@ class _Game implements Game {
 @override final  int totalScore;
 @override final  DateTime createdAt;
 @override final  DateTime? finishedAt;
+@override@JsonKey() final  bool lastRoundWasSkipped;
 
 /// Create a copy of Game
 /// with the given fields replaced by the non-null parameter values.
@@ -247,16 +249,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Game&&(identical(other.id, id) || other.id == id)&&(identical(other.playerName, playerName) || other.playerName == playerName)&&(identical(other.totalRounds, totalRounds) || other.totalRounds == totalRounds)&&const DeepCollectionEquality().equals(other._rounds, _rounds)&&(identical(other.correctCount, correctCount) || other.correctCount == correctCount)&&(identical(other.totalScore, totalScore) || other.totalScore == totalScore)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.finishedAt, finishedAt) || other.finishedAt == finishedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Game&&(identical(other.id, id) || other.id == id)&&(identical(other.playerName, playerName) || other.playerName == playerName)&&(identical(other.totalRounds, totalRounds) || other.totalRounds == totalRounds)&&const DeepCollectionEquality().equals(other._rounds, _rounds)&&(identical(other.correctCount, correctCount) || other.correctCount == correctCount)&&(identical(other.totalScore, totalScore) || other.totalScore == totalScore)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.finishedAt, finishedAt) || other.finishedAt == finishedAt)&&(identical(other.lastRoundWasSkipped, lastRoundWasSkipped) || other.lastRoundWasSkipped == lastRoundWasSkipped));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,playerName,totalRounds,const DeepCollectionEquality().hash(_rounds),correctCount,totalScore,createdAt,finishedAt);
+int get hashCode => Object.hash(runtimeType,id,playerName,totalRounds,const DeepCollectionEquality().hash(_rounds),correctCount,totalScore,createdAt,finishedAt,lastRoundWasSkipped);
 
 @override
 String toString() {
-  return 'Game(id: $id, playerName: $playerName, totalRounds: $totalRounds, rounds: $rounds, correctCount: $correctCount, totalScore: $totalScore, createdAt: $createdAt, finishedAt: $finishedAt)';
+  return 'Game(id: $id, playerName: $playerName, totalRounds: $totalRounds, rounds: $rounds, correctCount: $correctCount, totalScore: $totalScore, createdAt: $createdAt, finishedAt: $finishedAt, lastRoundWasSkipped: $lastRoundWasSkipped)';
 }
 
 
@@ -267,7 +269,7 @@ abstract mixin class _$GameCopyWith<$Res> implements $GameCopyWith<$Res> {
   factory _$GameCopyWith(_Game value, $Res Function(_Game) _then) = __$GameCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String playerName, int totalRounds, List<Round> rounds, int correctCount, int totalScore, DateTime createdAt, DateTime? finishedAt
+ String id, String playerName, int totalRounds, List<Round> rounds, int correctCount, int totalScore, DateTime createdAt, DateTime? finishedAt, bool lastRoundWasSkipped
 });
 
 
@@ -284,7 +286,7 @@ class __$GameCopyWithImpl<$Res>
 
 /// Create a copy of Game
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? playerName = null,Object? totalRounds = null,Object? rounds = null,Object? correctCount = null,Object? totalScore = null,Object? createdAt = null,Object? finishedAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? playerName = null,Object? totalRounds = null,Object? rounds = null,Object? correctCount = null,Object? totalScore = null,Object? createdAt = null,Object? finishedAt = freezed,Object? lastRoundWasSkipped = null,}) {
   return _then(_Game(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,playerName: null == playerName ? _self.playerName : playerName // ignore: cast_nullable_to_non_nullable
@@ -294,7 +296,8 @@ as List<Round>,correctCount: null == correctCount ? _self.correctCount : correct
 as int,totalScore: null == totalScore ? _self.totalScore : totalScore // ignore: cast_nullable_to_non_nullable
 as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,finishedAt: freezed == finishedAt ? _self.finishedAt : finishedAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,
+as DateTime?,lastRoundWasSkipped: null == lastRoundWasSkipped ? _self.lastRoundWasSkipped : lastRoundWasSkipped // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

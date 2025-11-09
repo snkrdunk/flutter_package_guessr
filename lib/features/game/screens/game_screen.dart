@@ -199,11 +199,12 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                         ),
                         const SizedBox(height: 12),
 
-                        // 回答ボタン（SKIPオプションを追加）
+                        // 回答ボタン
                         AnswerButtons(
                           candidates: [...question.candidates, 'SKIP'],
                           onAnswer: _handleAnswer,
                           isEnabled: timerSeconds > 0,
+                          canSkip: ref.watch(canSkipProvider(widget.gameId)),
                         ),
                         const SizedBox(height: 16),
                       ],

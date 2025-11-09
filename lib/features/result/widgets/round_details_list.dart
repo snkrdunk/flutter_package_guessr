@@ -57,6 +57,70 @@ class _RoundItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // スキップの場合の特別処理
+    if (round.isSkipped) {
+      return ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: CircleAvatar(
+          backgroundColor: Colors.orange.shade300,
+          child: Text(
+            '$roundNumber',
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        title: Text(
+          round.packageName,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 4),
+            Text(
+              'スキップしました',
+              style: TextStyle(
+                color: Colors.orange.shade700,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              '残り時間: ${round.timeRemaining}秒',
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 13,
+              ),
+            ),
+          ],
+        ),
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Icon(
+              Icons.skip_next,
+              color: Colors.orange,
+              size: 28,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'SKIP',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.orange,
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // 通常の正解/不正解の処理
     final score = round.isCorrect ? 100 + round.timeRemaining : 0;
 
     return ListTile(

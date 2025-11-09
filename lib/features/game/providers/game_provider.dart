@@ -105,3 +105,13 @@ Future<Game?> gameResult(Ref ref, String gameId) async {
   final repository = await ref.read(gameRepositoryProvider.future);
   return await repository.getGame(gameId);
 }
+
+/// 現在スキップ可能かどうかを判定するプロバイダー
+@riverpod
+bool canSkip(Ref ref, String gameId) {
+  final game = ref.watch(currentGameProvider(gameId)).value;
+  if (game == null) return false;
+
+  // 直前のラウンドでスキップしていた場合はスキップ不可
+  return !game.lastRoundWasSkipped;
+}

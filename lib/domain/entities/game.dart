@@ -14,6 +14,7 @@ abstract class Game with _$Game {
     required int totalScore,
     required DateTime createdAt,
     DateTime? finishedAt,
+    @Default(false) bool lastRoundWasSkipped,
   }) = _Game;
 
   factory Game.fromJson(Map<String, dynamic> json) => _$GameFromJson(json);

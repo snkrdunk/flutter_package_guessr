@@ -5,29 +5,45 @@ class AnswerButtons extends StatelessWidget {
   final List<String> candidates;
   final Function(String) onAnswer;
   final bool isEnabled;
+  final bool canSkip;
 
   const AnswerButtons({
     super.key,
     required this.candidates,
     required this.onAnswer,
     this.isEnabled = true,
+    this.canSkip = true,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      alignment: WrapAlignment.center,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: candidates.map((candidate) {
-        return IntrinsicWidth(
-          child: _AnswerButton(
-            label: candidate,
-            onTap: isEnabled ? () => onAnswer(candidate) : null,
-          ),
-        );
-      }).toList(),
+    // SKIPを除外した候補リストを作成
+    final normalCandidates = candidates.where((c) => c != 'SKIP').toList();
+
+    return Column(
+      children: [
+        // 通常の候補ボタン
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          alignment: WrapAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: normalCandidates.map((candidate) {
+            return IntrinsicWidth(
+              child: _AnswerButton(
+                label: candidate,
+                onTap: isEnabled ? () => onAnswer(candidate) : null,
+              ),
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: 16),
+        // スキップボタン（分離して表示）
+        _SkipButton(
+          onTap: isEnabled && canSkip ? () => onAnswer('SKIP') : null,
+          canSkip: canSkip,
+        ),
+      ],
     );
   }
 }
@@ -100,6 +116,47 @@ class _AnswerButtonState extends State<_AnswerButton> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _SkipButton extends StatelessWidget {
+  final VoidCallback? onTap;
+  final bool canSkip;
+
+  const _SkipButton({
+    required this.onTap,
+    required this.canSkip,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isEnabled = onTap != null;
+
+    return OutlinedButton.icon(
+      onPressed: onTap,
+      icon: Icon(
+        Icons.skip_next,
+        size: 18,
+        color: isEnabled ? Colors.orange : Colors.grey,
+      ),
+      label: Text(
+        canSkip ? 'スキップ' : 'スキップ不可（連続使用不可）',
+        style: TextStyle(
+          color: isEnabled ? Colors.orange : Colors.grey,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      style: OutlinedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        side: BorderSide(
+          color: isEnabled ? Colors.orange : Colors.grey.shade300,
+          width: 2,
+        ),
+        backgroundColor: isEnabled
+            ? Colors.orange.withValues(alpha: 0.1)
+            : Colors.grey.shade100,
       ),
     );
   }

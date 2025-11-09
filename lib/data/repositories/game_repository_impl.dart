@@ -21,6 +21,7 @@ class GameRepositoryImpl implements GameRepository {
       totalScore: 0,
       createdAt: DateTime.now(),
       finishedAt: null,
+      lastRoundWasSkipped: false,
     );
 
     // ローカルストレージに保存
@@ -73,6 +74,7 @@ class GameRepositoryImpl implements GameRepository {
       rounds: [...game.rounds, newRound],
       correctCount: isCorrect ? game.correctCount + 1 : game.correctCount,
       totalScore: game.totalScore + score,
+      lastRoundWasSkipped: isSkipped,
     );
 
     await _saveGame(updatedGame);

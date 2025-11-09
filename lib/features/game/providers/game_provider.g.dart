@@ -167,7 +167,7 @@ final class CurrentQuestionProvider
   }
 }
 
-String _$currentQuestionHash() => r'4d6ef5e838e1536e6ae33d11eb1d3bfefbad091b';
+String _$currentQuestionHash() => r'4d15c65b2884e84e2814adc8141f58bc9f20bbc9';
 
 /// 現在の問題を取得するプロバイダー
 
@@ -437,4 +437,89 @@ final class GameResultFamily extends $Family
 
   @override
   String toString() => r'gameResultProvider';
+}
+
+/// 現在スキップ可能かどうかを判定するプロバイダー
+
+@ProviderFor(canSkip)
+const canSkipProvider = CanSkipFamily._();
+
+/// 現在スキップ可能かどうかを判定するプロバイダー
+
+final class CanSkipProvider extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
+  /// 現在スキップ可能かどうかを判定するプロバイダー
+  const CanSkipProvider._({
+    required CanSkipFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'canSkipProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$canSkipHash();
+
+  @override
+  String toString() {
+    return r'canSkipProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  bool create(Ref ref) {
+    final argument = this.argument as String;
+    return canSkip(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is CanSkipProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$canSkipHash() => r'45867a71e9dda29ded3116fc0f6879ff2f5f9dff';
+
+/// 現在スキップ可能かどうかを判定するプロバイダー
+
+final class CanSkipFamily extends $Family
+    with $FunctionalFamilyOverride<bool, String> {
+  const CanSkipFamily._()
+    : super(
+        retry: null,
+        name: r'canSkipProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// 現在スキップ可能かどうかを判定するプロバイダー
+
+  CanSkipProvider call(String gameId) =>
+      CanSkipProvider._(argument: gameId, from: this);
+
+  @override
+  String toString() => r'canSkipProvider';
 }

@@ -19,6 +19,7 @@ _Game _$GameFromJson(Map<String, dynamic> json) => _Game(
   finishedAt: json['finishedAt'] == null
       ? null
       : DateTime.parse(json['finishedAt'] as String),
+  lastRoundWasSkipped: json['lastRoundWasSkipped'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$GameToJson(_Game instance) => <String, dynamic>{
@@ -30,6 +31,7 @@ Map<String, dynamic> _$GameToJson(_Game instance) => <String, dynamic>{
   'totalScore': instance.totalScore,
   'createdAt': instance.createdAt.toIso8601String(),
   'finishedAt': instance.finishedAt?.toIso8601String(),
+  'lastRoundWasSkipped': instance.lastRoundWasSkipped,
 };
 
 _Round _$RoundFromJson(Map<String, dynamic> json) => _Round(
