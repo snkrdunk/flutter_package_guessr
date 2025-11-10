@@ -49,35 +49,11 @@ class HintDisplay extends StatelessWidget {
   List<HintInfo> _getHints() {
     final hints = <HintInfo>[];
 
-    // 45秒以下: プラットフォーム情報
-    if (secondsRemaining <= 45 && package.platforms.isNotEmpty) {
-      hints.add(HintInfo(
-        icon: Icons.devices,
-        label: 'Platform: ${package.platforms.join(", ")}',
-      ));
-    }
-
     // 30秒以下: タグ情報
     if (secondsRemaining <= 30 && package.tags.isNotEmpty) {
       hints.add(HintInfo(
         icon: Icons.label,
         label: 'Tags: ${package.tags.take(2).join(", ")}',
-      ));
-    }
-
-    // 15秒以下: Pub Points
-    if (secondsRemaining <= 15) {
-      hints.add(HintInfo(
-        icon: Icons.star,
-        label: 'Pub Points: ${package.pubPoints}',
-      ));
-    }
-
-    // 5秒以下: いいね数
-    if (secondsRemaining <= 5) {
-      hints.add(HintInfo(
-        icon: Icons.favorite,
-        label: 'Likes: ${package.likes}',
       ));
     }
 
