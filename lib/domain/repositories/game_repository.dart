@@ -16,6 +16,12 @@ abstract class GameRepository {
     required int timeRemaining,
   });
 
+  /// 問題をスキップ（回答数にカウントせず、問題だけ変更）
+  Future<Game> skipQuestion({
+    required String gameId,
+    required String packageName,
+  });
+
   /// ゲームを終了
   Future<Game> finishGame(String gameId);
 

@@ -82,6 +82,25 @@ class GameRepositoryImpl implements GameRepository {
   }
 
   @override
+  Future<Game> skipQuestion({
+    required String gameId,
+    required String packageName,
+  }) async {
+    final game = await getGame(gameId);
+    if (game == null) {
+      throw Exception('Game not found: $gameId');
+    }
+
+    // スキップは単にlastRoundWasSkippedフラグを立てるだけ
+    final updatedGame = game.copyWith(
+      lastRoundWasSkipped: true,
+    );
+
+    await _saveGame(updatedGame);
+    return updatedGame;
+  }
+
+  @override
   Future<Game> finishGame(String gameId) async {
     final game = await getGame(gameId);
     if (game == null) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../domain/entities/game.dart';
 import '../providers/game_provider.dart';
 import '../providers/timer_provider.dart';
 import '../widgets/answer_buttons.dart';
@@ -61,8 +62,14 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     final isSkipped = answer == 'SKIP';
     final isCorrect = !isSkipped && answer == _currentQuestionPackageName;
 
-    // スキップ時以外はフィードバックを表示
-    if (!isSkipped) {
+    Game? updatedGame;
+
+    if (isSkipped) {
+      // スキップ時は回答数にカウントせず、問題だけ変更
+      updatedGame = await ref
+          .read(currentGameProvider(widget.gameId).notifier)
+          .skipQuestion(_currentQuestionPackageName!);
+    } else {
       // ボタンのフィードバックを少し表示
       await Future.delayed(const Duration(milliseconds: 300));
 
@@ -79,12 +86,12 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       );
 
       if (!mounted) return;
-    }
 
-    // 回答を送信して更新されたゲームデータを取得
-    final updatedGame = await ref
-        .read(currentGameProvider(widget.gameId).notifier)
-        .submitAnswer(answer, timeRemaining, _currentQuestionPackageName!);
+      // 回答を送信して更新されたゲームデータを取得
+      updatedGame = await ref
+          .read(currentGameProvider(widget.gameId).notifier)
+          .submitAnswer(answer, timeRemaining, _currentQuestionPackageName!);
+    }
 
     if (!mounted || updatedGame == null) {
       if (mounted) {
@@ -98,6 +105,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
     }
 
     // 更新されたゲームデータから直接終了判定
+    // rounds.lengthで判定（実際の回答数）
     final isFinished = updatedGame.rounds.length >= updatedGame.totalRounds;
 
     if (isFinished) {

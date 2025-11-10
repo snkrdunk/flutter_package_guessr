@@ -42,6 +42,27 @@ class CurrentGame extends _$CurrentGame {
     }
   }
 
+  /// 問題をスキップ（回答数にカウントしない）
+  Future<Game?> skipQuestion(String packageName) async {
+    final game = state.value;
+    if (game == null) return null;
+
+    try {
+      final repository = await ref.read(gameRepositoryProvider.future);
+      final updatedGame = await repository.skipQuestion(
+        gameId: gameId,
+        packageName: packageName,
+      );
+
+      // 状態を更新
+      state = AsyncValue.data(updatedGame);
+      return updatedGame;
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      return null;
+    }
+  }
+
   /// ゲームを終了
   Future<Game?> finishGame() async {
     try {
@@ -67,19 +88,16 @@ Future<Question?> currentQuestion(
   final game = await ref.watch(currentGameProvider(gameId).future);
   if (game == null) return null;
 
-  // 既に10ラウンド終了している場合はnullを返す
+  // 既に10ラウンド回答した場合はnullを返す
   if (game.rounds.length >= game.totalRounds) {
     return null;
   }
 
-  // SKIPされていないラウンドのパッケージ名のみを除外リストに追加
-  final usedPackages = game.rounds
-      .where((r) => !r.isSkipped)
-      .map((r) => r.packageName)
-      .toList();
+  // 回答済みのパッケージ名を除外リストに追加
+  final answeredPackages = game.rounds.map((r) => r.packageName).toList();
 
   final packageRepository = ref.read(packageRepositoryProvider);
-  return await packageRepository.generateQuestion(usedPackages);
+  return await packageRepository.generateQuestion(answeredPackages);
 }
 
 /// 現在のラウンド番号を取得するプロバイダー

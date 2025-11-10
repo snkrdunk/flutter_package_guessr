@@ -53,7 +53,7 @@ final class CurrentGameProvider
   }
 }
 
-String _$currentGameHash() => r'87fa7f1e64213a7bc515e69c478323310bfcca4f';
+String _$currentGameHash() => r'fc38ba3ec76d58d3eed0e2f8a5f479a89b95e652';
 
 /// 現在のゲーム状態を管理するプロバイダー
 
@@ -167,7 +167,7 @@ final class CurrentQuestionProvider
   }
 }
 
-String _$currentQuestionHash() => r'4d15c65b2884e84e2814adc8141f58bc9f20bbc9';
+String _$currentQuestionHash() => r'8a07c1ecc6f1167c4cc545e53b09c9a9be91197b';
 
 /// 現在の問題を取得するプロバイダー
 
