@@ -40,9 +40,9 @@ class ResultScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: OutlinedButton.icon(
-                          onPressed: () => context.go('/history'),
-                          icon: const Icon(Icons.history),
-                          label: const Text('履歴を見る'),
+                          onPressed: () => context.go('/'),
+                          icon: const Icon(Icons.home),
+                          label: const Text('ホームへ'),
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
@@ -50,31 +50,17 @@ class ResultScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: 16),
                       Expanded(
-                        child: ElevatedButton.icon(
+                        child: FilledButton.icon(
                           onPressed: () => context.go('/'),
-                          icon: const Icon(Icons.home),
-                          label: const Text('ホームへ'),
-                          style: ElevatedButton.styleFrom(
+                          icon: const Icon(Icons.replay),
+                          label: const Text('もう一度プレイ'),
+                          style: FilledButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
+                            backgroundColor: Colors.indigo,
                           ),
                         ),
                       ),
                     ],
-                  ),
-                  const SizedBox(height: 16),
-
-                  // もう一度プレイボタン
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton.icon(
-                      onPressed: () => context.go('/'),
-                      icon: const Icon(Icons.replay),
-                      label: const Text('もう一度プレイ'),
-                      style: FilledButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        backgroundColor: Colors.indigo,
-                      ),
-                    ),
                   ),
                 ],
               ),

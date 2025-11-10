@@ -39,21 +39,6 @@ class HomeScreen extends ConsumerWidget {
 
                 // スタートボタン
                 const StartButton(),
-
-                const SizedBox(height: 32),
-
-                // スコア履歴ボタン
-                OutlinedButton.icon(
-                  onPressed: () => context.go('/history'),
-                  icon: const Icon(Icons.history),
-                  label: const Text('スコア履歴'),
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 32,
-                      vertical: 16,
-                    ),
-                  ),
-                ),
               ],
             ),
           ),

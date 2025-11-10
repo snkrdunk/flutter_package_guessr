@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../domain/entities/game.dart';
 import '../home/screens/home_screen.dart';
-import '../home/screens/score_history_screen.dart';
 import '../game/screens/game_screen.dart';
 import '../result/screens/result_screen.dart';
 
@@ -15,13 +14,6 @@ final goRouter = GoRouter(
       path: '/',
       name: 'home',
       builder: (context, state) => const HomeScreen(),
-    ),
-
-    // スコア履歴画面
-    GoRoute(
-      path: '/history',
-      name: 'history',
-      builder: (context, state) => const ScoreHistoryScreen(),
     ),
 
     // ゲーム画面
