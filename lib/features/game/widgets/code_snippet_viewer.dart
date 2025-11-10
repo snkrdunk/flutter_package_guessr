@@ -32,7 +32,7 @@ class _CodeSnippetViewerState extends State<CodeSnippetViewer> {
   Widget build(BuildContext context) {
     if (widget.snippets.isEmpty) {
       return const Center(
-        child: Text('スニペットがありません'),
+        child: Text('No snippets available'),
       );
     }
 
@@ -45,7 +45,7 @@ class _CodeSnippetViewerState extends State<CodeSnippetViewer> {
         Padding(
           padding: const EdgeInsets.only(bottom: 8),
           child: Text(
-            'スニペット ${_currentIndex + 1}/${widget.snippets.length}',
+            'Snippet ${_currentIndex + 1}/${widget.snippets.length}',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Colors.grey[600],
                   fontWeight: FontWeight.w500,
@@ -105,7 +105,7 @@ class _CodeSnippetViewerState extends State<CodeSnippetViewer> {
                   icon: const Icon(Icons.arrow_back_ios, size: 32),
                   color: Colors.indigo,
                   onPressed: () => _changeSnippet(-1),
-                  tooltip: '前のスニペット',
+                  tooltip: 'Previous snippet',
                 ),
               ),
 
@@ -117,7 +117,7 @@ class _CodeSnippetViewerState extends State<CodeSnippetViewer> {
                   icon: const Icon(Icons.arrow_forward_ios, size: 32),
                   color: Colors.indigo,
                   onPressed: () => _changeSnippet(1),
-                  tooltip: '次のスニペット',
+                  tooltip: 'Next snippet',
                 ),
               ),
           ],

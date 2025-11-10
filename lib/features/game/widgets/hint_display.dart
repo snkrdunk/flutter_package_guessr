@@ -29,7 +29,7 @@ class HintDisplay extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'ヒント',
+          'Hint',
           style: Theme.of(context).textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Colors.indigo,

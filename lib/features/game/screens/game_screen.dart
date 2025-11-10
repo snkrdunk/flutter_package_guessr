@@ -164,19 +164,19 @@ class _GameScreenState extends ConsumerState<GameScreen> {
             showDialog(
               context: context,
               builder: (context) => AlertDialog(
-                title: const Text('ゲームを終了しますか？'),
-                content: const Text('進行中のゲームは保存されません。'),
+                title: const Text('Quit Game?'),
+                content: const Text('Your progress will not be saved.'),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('キャンセル'),
+                    child: const Text('Cancel'),
                   ),
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pop();
                       context.go('/');
                     },
-                    child: const Text('終了'),
+                    child: const Text('Quit'),
                   ),
                 ],
               ),
@@ -187,13 +187,13 @@ class _GameScreenState extends ConsumerState<GameScreen> {
       body: gameAsync.when(
         data: (game) {
           if (game == null) {
-            return const Center(child: Text('ゲームが見つかりません'));
+            return const Center(child: Text('Game not found'));
           }
 
           return questionAsync.when(
             data: (question) {
               if (question == null) {
-                return const Center(child: Text('問題の読み込みに失敗しました'));
+                return const Center(child: Text('Failed to load question'));
               }
 
               // 現在の問題のパッケージ名を保存
@@ -236,7 +236,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
 
                         // 質問
                         Text(
-                          'このコードはどのパッケージのものでしょうか？',
+                          'Which package does this code belong to?',
                           style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(fontWeight: FontWeight.w600),
                           textAlign: TextAlign.center,
@@ -268,7 +268,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
                   const Icon(Icons.error_outline, size: 64, color: Colors.red),
                   const SizedBox(height: 16),
                   Text(
-                    '問題の読み込みに失敗しました',
+                    'Failed to load question',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: 8),
@@ -289,7 +289,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
               const Icon(Icons.error_outline, size: 64, color: Colors.red),
               const SizedBox(height: 16),
               Text(
-                'ゲームの読み込みに失敗しました',
+                'Failed to load game',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               const SizedBox(height: 8),
@@ -300,7 +300,7 @@ class _GameScreenState extends ConsumerState<GameScreen> {
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () => context.go('/'),
-                child: const Text('ホームに戻る'),
+                child: const Text('Back to Home'),
               ),
             ],
           ),

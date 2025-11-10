@@ -60,6 +60,9 @@ dependencies:
   # Code Display
   flutter_highlight: ^0.7.0
 
+  # URL Launcher
+  url_launcher: ^6.2.5
+
   cupertino_icons: ^1.0.8
 
 dev_dependencies:

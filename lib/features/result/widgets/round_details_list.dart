@@ -20,7 +20,7 @@ class RoundDetailsList extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16),
             child: Text(
-              'ラウンド詳細',
+              'Round Details',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -80,7 +80,7 @@ class _RoundItem extends StatelessWidget {
           children: [
             const SizedBox(height: 4),
             Text(
-              'スキップしました',
+              'Skipped',
               style: TextStyle(
                 color: Colors.orange.shade700,
                 fontSize: 13,
@@ -89,7 +89,7 @@ class _RoundItem extends StatelessWidget {
             ),
             const SizedBox(height: 2),
             Text(
-              '残り時間: ${round.timeRemaining}秒',
+              'Time remaining: ${round.timeRemaining}s',
               style: TextStyle(
                 color: Colors.grey[600],
                 fontSize: 13,
@@ -145,7 +145,7 @@ class _RoundItem extends StatelessWidget {
           const SizedBox(height: 4),
           if (round.userAnswer != null && round.userAnswer!.isNotEmpty)
             Text(
-              '回答: ${round.userAnswer}',
+              'Answer: ${round.userAnswer}',
               style: TextStyle(
                 color: Colors.grey[600],
                 fontSize: 13,
@@ -153,7 +153,7 @@ class _RoundItem extends StatelessWidget {
             )
           else
             Text(
-              '回答: タイムアップ',
+              'Answer: Time Up',
               style: TextStyle(
                 color: Colors.grey[600],
                 fontSize: 13,
@@ -161,7 +161,7 @@ class _RoundItem extends StatelessWidget {
             ),
           const SizedBox(height: 2),
           Text(
-            '残り時間: ${round.timeRemaining}秒',
+            'Time remaining: ${round.timeRemaining}s',
             style: TextStyle(
               color: Colors.grey[600],
               fontSize: 13,

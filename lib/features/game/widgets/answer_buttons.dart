@@ -211,7 +211,7 @@ class _SkipButton extends StatelessWidget {
         color: isEnabled ? Colors.orange : Colors.grey,
       ),
       label: Text(
-        canSkip ? 'スキップ' : 'スキップ不可（連続使用不可）',
+        canSkip ? 'Skip' : 'Skip Unavailable (Cannot use consecutively)',
         style: TextStyle(
           color: isEnabled ? Colors.orange : Colors.grey,
           fontWeight: FontWeight.w600,

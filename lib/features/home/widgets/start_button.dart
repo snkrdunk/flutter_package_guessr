@@ -25,7 +25,7 @@ class _StartButtonState extends ConsumerState<StartButton> {
       final name = _nameController.text.trim();
       if (name.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('名前を入力してください')),
+          const SnackBar(content: Text('Please enter your name')),
         );
         return;
       }
@@ -43,7 +43,7 @@ class _StartButtonState extends ConsumerState<StartButton> {
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('エラーが発生しました: $e')),
+            SnackBar(content: Text('An error occurred: $e')),
           );
         }
       }
@@ -66,8 +66,8 @@ class _StartButtonState extends ConsumerState<StartButton> {
             child: TextField(
               controller: _nameController,
               decoration: const InputDecoration(
-                labelText: 'プレイヤー名',
-                hintText: '名前を入力',
+                labelText: 'Player Name',
+                hintText: 'Enter your name',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.person),
               ),
@@ -83,7 +83,7 @@ class _StartButtonState extends ConsumerState<StartButton> {
           onPressed: _handleStart,
           icon: const Icon(Icons.play_arrow, size: 32),
           label: Text(
-            _showNameInput ? 'ゲームスタート' : 'はじめる',
+            _showNameInput ? 'Start Game' : 'Start',
             style: const TextStyle(fontSize: 20),
           ),
           style: ElevatedButton.styleFrom(
@@ -106,7 +106,7 @@ class _StartButtonState extends ConsumerState<StartButton> {
                 _nameController.clear();
               });
             },
-            child: const Text('キャンセル'),
+            child: const Text('Cancel'),
           ),
         ],
       ],

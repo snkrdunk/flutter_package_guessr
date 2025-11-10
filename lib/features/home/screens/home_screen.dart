@@ -30,7 +30,7 @@ class HomeScreen extends ConsumerWidget {
 
                 // サブタイトル
                 Text(
-                  'どのパッケージのコードか当てよう！',
+                  'Guess which package the code belongs to!',
                   style: Theme.of(
                     context,
                   ).textTheme.titleMedium?.copyWith(color: Colors.grey[600]),

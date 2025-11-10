@@ -49,7 +49,7 @@ class ScoreSummaryCard extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    '総スコア',
+                    'Total Score',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           color: Colors.grey[600],
                         ),
@@ -73,13 +73,13 @@ class ScoreSummaryCard extends StatelessWidget {
               children: [
                 _StatItem(
                   icon: Icons.check_circle,
-                  label: '正解数',
+                  label: 'Correct',
                   value: '${game.correctCount}/${game.totalRounds}',
                   color: Colors.green,
                 ),
                 _StatItem(
                   icon: Icons.percent,
-                  label: '正解率',
+                  label: 'Accuracy',
                   value: '$accuracy%',
                   color: Colors.blue,
                 ),

@@ -46,7 +46,7 @@ final goRouter = GoRouter(
           const Icon(Icons.error_outline, size: 64, color: Colors.red),
           const SizedBox(height: 16),
           Text(
-            'ページが見つかりません',
+            'Page not found',
             style: Theme.of(context).textTheme.headlineSmall,
           ),
           const SizedBox(height: 8),
@@ -58,7 +58,7 @@ final goRouter = GoRouter(
           ElevatedButton.icon(
             onPressed: () => context.go('/'),
             icon: const Icon(Icons.home),
-            label: const Text('ホームに戻る'),
+            label: const Text('Back to Home'),
           ),
         ],
       ),
